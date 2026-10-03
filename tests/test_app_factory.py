@@ -24,9 +24,9 @@ def test_health_endpoint(client):
     }
 
 
-def test_root_is_only_a_foundation_placeholder(client):
+def test_root_renders_public_site(client):
     response = client.get("/")
     assert response.status_code == 200
-    payload = response.get_json()
-    assert payload["project"] == "WATO EVENTS"
-    assert payload["status"] == "foundation-ready"
+    assert "text/html" in response.content_type
+    assert b"WATO EVENTS" in response.data
+    assert b"Demander un devis" in response.data
