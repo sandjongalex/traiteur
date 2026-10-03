@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - ".github/workflows/ui-final-validation.yml"
+      - "tests/**"
 
 jobs:
   validate:
