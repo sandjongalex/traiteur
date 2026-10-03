@@ -43,7 +43,7 @@
     const r = estimate();
     root.querySelector("[data-estimate-total]").textContent = !r.lines.length
       ? "Aucune sélection chiffrée"
-      : r.partial ? "Estimation partielle à partir de " + money(r.total) : "Environ " + money(r.total);
+      : r.partial ? (r.total > 0 ? "Estimation partielle à partir de " + money(r.total) : "Montant à confirmer après étude") : "Environ " + money(r.total);
     root.querySelector("[data-estimate-note]").textContent = r.partial
       ? "Certains éléments seront chiffrés après étude de votre demande."
       : "Le montant définitif sera confirmé par WATO EVENTS après étude de votre demande.";
@@ -61,7 +61,7 @@
     const min=value("budget_min"), max=value("budget_max");
     root.querySelector("[data-summary-budget]").textContent = min||max ? [min?money(Number(min)):"non précisé",max?money(Number(max)):"non précisé"].join(" → ") : "Non précisé";
     root.querySelector("[data-summary-contact]").textContent = [value("customer_name"),value("phone"),value("whatsapp"),value("email")].filter(Boolean).join(" · ") || "—";
-    root.querySelector("[data-summary-estimate]").textContent = r.partial ? "À partir de " + money(r.total) + " + éléments à confirmer" : r.lines.length ? money(r.total) : "À confirmer après étude";
+    root.querySelector("[data-summary-estimate]").textContent = r.partial ? (r.total > 0 ? "À partir de " + money(r.total) + " + éléments à confirmer" : "À confirmer après étude") : r.lines.length ? money(r.total) : "À confirmer après étude";
   };
 
   const show = number => {
