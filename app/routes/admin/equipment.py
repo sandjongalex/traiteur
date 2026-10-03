@@ -227,7 +227,7 @@ def item_detail(item_id):
         .where(Equipment.id == item_id)
         .options(
             selectinload(Equipment.category),
-            selectinload(Equipment.movements).selectinload(EquipmentMovement.equipment),
+            selectinload(Equipment.movements),
         )
     )
     if item is None:
