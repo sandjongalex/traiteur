@@ -26,3 +26,14 @@ AuditLog est non éditable dans l’interface. Sont journalisés notamment : log
 
 ## Ancien bypass
 `WATO_CATALOG_ADMIN_KEY`, le formulaire de clé, la route d’accès et la session `catalog_admin` ont été supprimés. Ils ne constituent plus un mécanisme d’accès.
+
+
+## SQLite en production actuelle
+
+Le fichier SQLite doit rester dans `instance/` ou un autre répertoire privé, jamais sous `app/static/` ou `uploads/`. Les permissions Unix doivent limiter lecture/écriture au compte PythonAnywhere concerné.
+
+Ne jamais journaliser `DATABASE_URL` complet : une future URL MySQL peut contenir des identifiants.
+
+Les sauvegardes SQLite doivent produire un snapshot cohérent via l'API backup SQLite ou pendant une fenêtre sans écriture. Les sauvegardes et fichiers DB sont exclus de Git.
+
+`SECRET_KEY` reste obligatoire en `APP_ENV=production`, même avec SQLite.
