@@ -1,0 +1,42 @@
+{% extends "admin/catalog_base.html" %}
+{% block admin_content %}
+<section class="admin-page-heading admin-page-heading-row">
+  <div><p class="eyebrow">Commercial</p><h1>Demandes de devis</h1><p>Demandes entrantes issues du configurateur public. Elles ne sont pas encore des devis officiels.</p></div>
+</section>
+
+<form class="admin-filter-bar" method="get">
+  <label>Recherche
+    <input type="search" name="q" value="{{ search }}" placeholder="Référence ou nom">
+  </label>
+  <label>Statut
+    <select name="status">
+      <option value="">Tous</option>
+      {% for status in statuses %}<option value="{{ status.value }}" {{ "selected" if selected_status == status.value else "" }}>{{ status.value }}</option>{% endfor %}
+    </select>
+  </label>
+  <button class="btn btn-primary" type="submit">Filtrer</button>
+</form>
+
+{% if items %}
+<div class="admin-table-wrap">
+<table class="admin-table">
+  <thead><tr><th>Référence</th><th>Demandeur</th><th>Événement</th><th>Date</th><th>Estimation</th><th>Statut</th><th></th></tr></thead>
+  <tbody>
+  {% for item in items %}
+  <tr>
+    <td data-label="Référence"><strong>{{ item.reference }}</strong><small>{{ item.created_at.strftime("%d/%m/%Y %H:%M") }}</small></td>
+    <td data-label="Demandeur">{{ item.customer_name }}</td>
+    <td data-label="Événement">{{ item.event_type }}<small>{{ item.guest_count }} pers.</small></td>
+    <td data-label="Date">{{ item.event_date.strftime("%d/%m/%Y") }}</td>
+    <td data-label="Estimation">{% if item.has_on_request_items %}À partir de {% endif %}{{ item.estimated_total|money }}</td>
+    <td data-label="Statut"><span class="badge {{ 'badge-live' if item.status in ['NEW','REVIEWING','CONTACTED'] else 'badge-muted' }}">{{ item.status }}</span></td>
+    <td data-label="Action"><a href="{{ url_for('quote_request_admin.request_detail', item_id=item.id) }}">Consulter</a></td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+{% else %}
+<div class="admin-empty"><h2>Aucune demande trouvée.</h2><p>Les nouvelles demandes du configurateur apparaîtront ici.</p></div>
+{% endif %}
+{% endblock %}
