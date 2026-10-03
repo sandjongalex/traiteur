@@ -26,3 +26,9 @@
 .admin-quick-actions-grid .btn{white-space:nowrap}
 @media(max-width:680px){.admin-quick-actions-grid{display:grid;grid-template-columns:1fr}.admin-quick-actions-grid .btn{width:100%}.admin-catalog-grid,.admin-dashboard-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:430px){.admin-catalog-grid,.admin-dashboard-grid{grid-template-columns:1fr}}
+
+.equipment-kpi-grid .equipment-stat{padding:1.2rem;border:1px solid var(--wato-line);border-radius:18px;background:#fff;box-shadow:var(--shadow-sm)}
+.equipment-kpi-grid .equipment-stat span,.equipment-kpi-grid .equipment-stat strong,.equipment-kpi-grid .equipment-stat small{display:block}
+.equipment-kpi-grid .equipment-stat span{font-size:.78rem;color:var(--wato-muted);text-transform:uppercase;letter-spacing:.08em}
+.equipment-kpi-grid .equipment-stat strong{font-family:var(--font-display);font-size:2.4rem;color:var(--wato-green)}
+.equipment-kpi-grid .equipment-stat small{color:var(--wato-muted)}
