@@ -319,3 +319,10 @@ Décisions :
 - minimum_people produit un warning/élément à confirmer au lieu d'un faux total ;
 - confirmation protégée par token public aléatoire ;
 - protection admin temporaire partagée avec le catalogue jusqu'au PROMPT 5.
+
+
+## 21. Authentification/RBAC — PROMPT 5
+
+Flask-Login est initialisé dans l’application factory. Les comptes User sont distincts du futur domaine Employee. Les permissions sont résolues via relations User↔Role↔Permission et contrôlées par `permission_required`.
+
+Le back-office commun vit sous `/admin`. Catalogue et QuoteRequest réutilisent ce système et aucun accès par clé temporaire n’est conservé. AuditService centralise la création d’AuditLog. Le seed RBAC crée les données de sécurité, tandis que la migration ne crée que le schéma.
