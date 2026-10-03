@@ -1,0 +1,6 @@
+<section class="section cta-band" aria-labelledby="cta-title">
+  <div class="container cta-band-inner">
+    <div><p class="eyebrow">Votre prochain événement</p><h2 id="cta-title">Vous préparez une réception ?</h2><p>Parlez-nous de votre projet. Nous étudierons votre besoin avant de vous proposer une prestation adaptée.</p></div>
+    <div class="cta-actions"><a class="btn btn-gold" href="{{ url_for('public.quote_request') }}">Demander un devis</a>{% if site.whatsapp_url %}<a class="btn btn-outline-light" href="{{ site.whatsapp_url }}" rel="noopener">WhatsApp</a>{% endif %}</div>
+  </div>
+</section>
