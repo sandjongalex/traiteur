@@ -14,3 +14,12 @@ def test_logout(client,app):
  create_user(); login(client); r=client.post("/admin/logout",follow_redirects=False); assert r.status_code in {301,302}
 def test_open_redirect_is_blocked(client,app):
  create_user(); r=client.post("/admin/login?next=https://evil.example",data={"email":"user@example.com","password":"very-secure-password"},follow_redirects=False); assert "evil.example" not in r.headers.get("Location","")
+
+def test_must_change_password_forces_profile(client,app):
+ from tests.helpers import create_user
+ u=create_user(); u.must_change_password=True
+ from app.extensions import db
+ db.session.commit(); login(client)
+ r=client.get("/admin/",follow_redirects=False)
+ assert r.status_code in {301,302}
+ assert "/admin/profile" in r.headers["Location"]
