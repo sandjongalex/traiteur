@@ -252,6 +252,63 @@
 </section>
 {% endif %}
 
+<section class="section home-universes-section">
+  <div class="container">
+    <div class="home-universes-header">
+      <div class="section-heading home-universes-heading">
+        <p class="eyebrow">Nos univers</p>
+        <h2>Une présentation pensée pour chaque occasion</h2>
+        <p>Cuisine, service et mise en scène se réunissent pour créer une réception cohérente et soignée.</p>
+      </div>
+      <a class="btn btn-outline" href="{{ url_for('public.services') }}">Découvrir nos prestations</a>
+    </div>
+
+    <div class="home-universes-mosaic" aria-label="Univers événementiels Wato Events">
+      <figure class="universe-card universe-card-main">
+        <img loading="lazy" src="{{ url_for('static', filename='images/gallery-table.svg') }}" alt="Illustration d’ambiance évoquant un univers de mariage et une table de cérémonie" width="960" height="720">
+        <figcaption>
+          <span class="universe-kicker">Univers</span>
+          <strong>Mariage</strong>
+        </figcaption>
+      </figure>
+
+      <figure class="universe-card">
+        <img loading="lazy" src="{{ url_for('static', filename='images/gallery-reception.svg') }}" alt="Illustration d’ambiance évoquant une réception élégante" width="640" height="480">
+        <figcaption>
+          <span class="universe-kicker">Univers</span>
+          <strong>Réception</strong>
+        </figcaption>
+      </figure>
+
+      <figure class="universe-card">
+        <img loading="lazy" src="{{ url_for('static', filename='images/gallery-buffet.svg') }}" alt="Illustration d’ambiance évoquant un buffet événementiel" width="640" height="480">
+        <figcaption>
+          <span class="universe-kicker">Univers</span>
+          <strong>Buffet</strong>
+        </figcaption>
+      </figure>
+
+      <figure class="universe-card">
+        <img loading="lazy" src="{{ url_for('static', filename='images/gallery-cocktail.svg') }}" alt="Illustration d’ambiance évoquant un cocktail événementiel" width="640" height="480">
+        <figcaption>
+          <span class="universe-kicker">Univers</span>
+          <strong>Cocktail</strong>
+        </figcaption>
+      </figure>
+
+      <figure class="universe-card">
+        <img loading="lazy" src="{{ url_for('static', filename='images/gallery-event.svg') }}" alt="Illustration d’ambiance évoquant un événement professionnel" width="640" height="480">
+        <figcaption>
+          <span class="universe-kicker">Univers</span>
+          <strong>Événement professionnel</strong>
+        </figcaption>
+      </figure>
+    </div>
+
+    <p class="universe-disclaimer">Visuels d’ambiance illustratifs — ils ne constituent pas des photographies de réalisations Wato Events.</p>
+  </div>
+</section>
+
 <section class="section section-soft"><div class="container split-feature"><div class="feature-visual"><img loading="lazy" src="{{ url_for('static', filename='images/culinary-wato.svg') }}" alt="Composition culinaire temporaire pour WATO EVENTS" width="800" height="650"></div><div class="feature-copy"><p class="eyebrow">L’expérience WATO</p><h2>Une cuisine qui accompagne l’ambiance de votre événement.</h2><p>Notre univers culinaire est pensé pour conjuguer convivialité, présentation et plaisir de recevoir.</p><div class="pill-list">{% for category in culinary_categories %}<span>{{ category }}</span>{% endfor %}</div><a class="text-link" href="{{ url_for('public.menus') }}">Découvrir l’univers des menus →</a></div></div></section>
 <section class="section why-section">
   <div class="container why-layout">
