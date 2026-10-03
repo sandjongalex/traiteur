@@ -1,0 +1,13 @@
+<footer class="site-footer">
+  <div class="container footer-grid">
+    <div>
+      <a class="brand brand-footer" href="{{ url_for('public.index') }}"><span class="brand-mark" aria-hidden="true">WE</span><span class="brand-text"><strong>WATO</strong><small>EVENTS</small></span></a>
+      <p class="footer-copy">{{ site.tagline }}</p>
+      <p class="footer-muted">Traiteur & Événementiel · Yaoundé, Cameroun</p>
+    </div>
+    <div><h2>Navigation</h2><a href="{{ url_for('public.about') }}">À propos</a><a href="{{ url_for('public.services') }}">Services</a><a href="{{ url_for('public.menus') }}">Menus</a><a href="{{ url_for('public.gallery') }}">Réalisations</a></div>
+    <div><h2>Votre projet</h2><a href="{{ url_for('public.quote_request') }}">Demander un devis</a><a href="{{ url_for('public.contact') }}">Nous contacter</a>{% if site.whatsapp_url %}<a href="{{ site.whatsapp_url }}" rel="noopener">WhatsApp</a>{% endif %}</div>
+    <div><h2>Localisation</h2><p>{{ site.city }}, {{ site.country }}</p>{% if site.phone %}<a href="tel:{{ site.phone }}">{{ site.phone }}</a>{% endif %}{% if site.email %}<a href="mailto:{{ site.email }}">{{ site.email }}</a>{% endif %}</div>
+  </div>
+  <div class="container footer-bottom"><span>© {{ current_year }} {{ site.company_name }}.</span><span>{{ site.tagline }}</span></div>
+</footer>
