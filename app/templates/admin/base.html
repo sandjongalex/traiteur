@@ -1,12 +1,77 @@
-<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{{ title or "Administration" }} | WATO EVENTS</title><link rel="stylesheet" href="{{ url_for('static',filename='css/app.css') }}"><link rel="stylesheet" href="{{ url_for('static',filename='css/catalog_admin.css') }}"></head><body class="admin-body">
-<header class="admin-header"><div class="container admin-header-inner"><a class="brand" href="{{ url_for('admin_core.dashboard') }}"><span class="brand-mark">WE</span><span class="brand-text"><strong>WATO</strong><small>ADMIN</small></span></a>
-{% if current_user.is_authenticated %}<nav class="admin-nav">
-<a href="{{ url_for('admin_core.dashboard') }}">Dashboard</a>
-{% if current_user.has_permission('quote_request.view') %}<a href="{{ url_for('quote_request_admin.request_list') }}">Demandes</a>{% endif %}
-{% if current_user.has_permission('catalog.view') %}<a href="{{ url_for('catalog_admin.dashboard') }}">Catalogue</a>{% endif %}
-{% if current_user.has_permission('equipment.view') %}<a href="{{ url_for('equipment_admin.dashboard') }}">Matériel</a>{% endif %}
-{% if current_user.has_permission('user.view') %}<a href="{{ url_for('users_admin.index') }}">Utilisateurs</a>{% endif %}
-{% if current_user.has_permission('role.view') %}<a href="{{ url_for('roles_admin.index') }}">Rôles</a>{% endif %}
-{% if current_user.has_permission('audit.view') %}<a href="{{ url_for('audit_admin.index') }}">Audit</a>{% endif %}
-<a href="{{ url_for('admin_auth.profile') }}">Profil</a></nav><form method="post" action="{{ url_for('admin_auth.logout') }}" class="admin-logout"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="btn btn-outline" type="submit">Déconnexion</button></form>{% endif %}</div></header>
-<main class="admin-main"><div class="container">{% with messages=get_flashed_messages(with_categories=true) %}{% if messages %}<div class="flash-stack">{% for category,message in messages %}<div class="flash flash-{{ category }}">{{ message }}</div>{% endfor %}</div>{% endif %}{% endwith %}{% block admin_content %}{% endblock %}</div></main></body></html>
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#0d2a23">
+  <title>{{ title or "Administration" }} | WATO EVENTS</title>
+  <link rel="stylesheet" href="{{ url_for('static',filename='css/app.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static',filename='css/catalog_admin.css') }}">
+  {% block admin_head %}{% endblock %}
+</head>
+<body class="admin-body" data-admin-body>
+<a class="skip-link" href="#admin-content">Aller au contenu</a>
+{% if current_user.is_authenticated %}
+<div class="admin-shell">
+  <aside class="admin-sidebar" id="admin-sidebar" aria-label="Navigation du back-office">
+    <a class="brand" href="{{ url_for('admin_core.dashboard') }}">
+      <span class="brand-mark" aria-hidden="true">WE</span>
+      <span class="brand-text"><strong>WATO</strong><small>ADMIN</small></span>
+    </a>
+    <nav class="admin-nav">
+      <span class="admin-nav-section">Pilotage</span>
+      <a class="{{ 'is-active' if request.blueprint == 'admin_core' else '' }}" href="{{ url_for('admin_core.dashboard') }}"><span class="admin-nav-icon" aria-hidden="true">⌂</span><span>Dashboard</span></a>
+      {% if current_user.has_permission('quote_request.view') %}<a class="{{ 'is-active' if request.blueprint == 'quote_request_admin' else '' }}" href="{{ url_for('quote_request_admin.request_list') }}"><span class="admin-nav-icon" aria-hidden="true">▤</span><span>Demandes</span></a>{% endif %}
+      <span class="admin-nav-section">Offre & opérations</span>
+      {% if current_user.has_permission('catalog.view') %}<a class="{{ 'is-active' if request.blueprint == 'catalog_admin' else '' }}" href="{{ url_for('catalog_admin.dashboard') }}"><span class="admin-nav-icon" aria-hidden="true">◇</span><span>Catalogue</span></a>{% endif %}
+      {% if current_user.has_permission('equipment.view') %}<a class="{{ 'is-active' if request.blueprint == 'equipment_admin' else '' }}" href="{{ url_for('equipment_admin.dashboard') }}"><span class="admin-nav-icon" aria-hidden="true">□</span><span>Matériel</span></a>{% endif %}
+      {% if current_user.has_permission('user.view') or current_user.has_permission('role.view') or current_user.has_permission('audit.view') %}<span class="admin-nav-section">Administration</span>{% endif %}
+      {% if current_user.has_permission('user.view') %}<a class="{{ 'is-active' if request.blueprint == 'users_admin' else '' }}" href="{{ url_for('users_admin.index') }}"><span class="admin-nav-icon" aria-hidden="true">○</span><span>Utilisateurs</span></a>{% endif %}
+      {% if current_user.has_permission('role.view') %}<a class="{{ 'is-active' if request.blueprint == 'roles_admin' else '' }}" href="{{ url_for('roles_admin.index') }}"><span class="admin-nav-icon" aria-hidden="true">◆</span><span>Rôles</span></a>{% endif %}
+      {% if current_user.has_permission('audit.view') %}<a class="{{ 'is-active' if request.blueprint == 'audit_admin' else '' }}" href="{{ url_for('audit_admin.index') }}"><span class="admin-nav-icon" aria-hidden="true">◷</span><span>Audit</span></a>{% endif %}
+    </nav>
+    <div class="admin-sidebar-footer">
+      <a class="{{ 'is-active' if request.endpoint == 'admin_auth.profile' else '' }}" href="{{ url_for('admin_auth.profile') }}">Profil</a>
+      <div class="admin-sidebar-user">
+        <strong>{{ current_user.full_name }}</strong>
+        <small>{{ current_user.roles|map(attribute='name')|join(', ') }}</small>
+      </div>
+      <form method="post" action="{{ url_for('admin_auth.logout') }}" class="admin-logout">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button class="btn btn-outline" type="submit" data-no-loading>Déconnexion</button>
+      </form>
+    </div>
+  </aside>
+  <div class="admin-overlay" data-admin-overlay hidden></div>
+  <div class="admin-workspace">
+    <header class="admin-topbar">
+      <div class="admin-topbar-left">
+        <button class="admin-menu-toggle" type="button" aria-controls="admin-sidebar" aria-expanded="false" aria-label="Ouvrir le menu" data-admin-menu>☰</button>
+        <div class="admin-topbar-title"><span>WATO EVENTS</span><strong>{{ title or "Administration" }}</strong></div>
+      </div>
+      <div class="admin-topbar-user">
+        <div class="admin-avatar" aria-hidden="true">{{ current_user.first_name[:1]|upper }}{{ current_user.last_name[:1]|upper }}</div>
+        <div class="admin-topbar-user-copy"><strong>{{ current_user.full_name }}</strong><small>{{ current_user.roles|map(attribute='name')|join(', ') }}</small></div>
+      </div>
+    </header>
+    <main class="admin-main" id="admin-content">
+      <div class="container">
+        {% with messages=get_flashed_messages(with_categories=true) %}
+          {% if messages %}<div class="flash-stack" aria-live="polite">{% for category,message in messages %}<div class="flash flash-{{ category }}">{{ message }}</div>{% endfor %}</div>{% endif %}
+        {% endwith %}
+        {% block admin_content %}{% endblock %}
+      </div>
+    </main>
+  </div>
+</div>
+{% else %}
+<main id="admin-content">
+  {% with messages=get_flashed_messages(with_categories=true) %}
+    {% if messages %}<div class="container flash-stack" aria-live="polite">{% for category,message in messages %}<div class="flash flash-{{ category }}">{{ message }}</div>{% endfor %}</div>{% endif %}
+  {% endwith %}
+  {% block admin_public_content %}{% block admin_content %}{% endblock %}{% endblock %}
+</main>
+{% endif %}
+<script src="{{ url_for('static', filename='js/admin.js') }}" defer></script>
+</body>
+</html>
