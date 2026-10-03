@@ -83,3 +83,12 @@ Aucune branche Alembic parallèle.
 ## Évolution future
 
 QuoteRequest pourra être relié ultérieurement à Prospect/Customer puis à Quote, sans modifier ses snapshots historiques.
+
+
+## Domaine authentification/RBAC
+
+Migration `20261003_03_auth_rbac`, après `20261003_02_quote_requests`.
+
+Tables : `users`, `roles`, `permissions`, `user_roles`, `role_permissions`, `audit_logs`.
+
+Contraintes : email unique, role.code unique, permission.code unique, associations many-to-many uniques. Les FK d’association utilisent CASCADE ; AuditLog → User utilise SET NULL afin de préserver l’historique.
