@@ -31,11 +31,6 @@ def _pricing_choices():
     return [(item.value, labels[item.value]) for item in PricingUnit]
 
 
-class AdminAccessForm(FlaskForm):
-    access_key = PasswordField("Clé d’accès", validators=[InputRequired(), Length(max=256)])
-    submit = SubmitField("Accéder au catalogue")
-
-
 class CategoryForm(FlaskForm):
     name = StringField("Nom", validators=[InputRequired(), Length(max=120)])
     slug = StringField("Slug", validators=[Optional(), Length(max=140)])
