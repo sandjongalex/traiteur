@@ -1,86 +1,55 @@
 # Stratégie de tests — WATO EVENTS
 
-## 1. Arborescence cible
+## Niveaux
 
-```text
-tests/
-  unit/
-  services/
-  routes/
-  permissions/
-  integration/
-```
+- modèles et contraintes ;
+- services métier ;
+- routes publiques ;
+- routes admin ;
+- permissions ;
+- intégration / transactions.
 
-La structure actuelle minimale reste valide et sera migrée progressivement.
+SQLite mémoire est utilisé pour les tests rapides. Les verrous et comportements dépendants de MySQL doivent aussi être validés sur MySQL avant production.
 
-## 2. Catégories
+## Catalogue
 
-### Unit tests
-Calculs purs, enums, helpers, validation.
+Tests existants : modèles, relations, publication, admin et uploads.
 
-### Service tests
-Règles métier et transitions, avec base de test.
+## QuoteRequest / PricingService
 
-### Route tests
-HTTP, formulaires, réponses, redirections, erreurs.
+Cas critiques ajoutés :
 
-### Permission tests
-Chaque rôle face aux actions sensibles et tentatives d'accès direct.
+- FIXED ;
+- PER_PERSON ;
+- PER_UNIT ;
+- PER_HOUR ;
+- ON_REQUEST ;
+- Decimal ;
+- minimum_people ;
+- quantité invalide ;
+- élément privé/inactif ;
+- GET configurateur ;
+- soumission valide ;
+- contact manquant ;
+- date passée ;
+- snapshot de prix ;
+- tentative de falsification `price=1` ;
+- double submission_token ;
+- confirmation avec token public ;
+- absence de données personnelles sur confirmation ;
+- admin protégé ;
+- liste/détail ;
+- statut valide/invalide ;
+- absence de hard delete standard.
 
-### Integration tests
-Scénarios multi-domaines et transactions.
+## Tests futurs prioritaires
 
-## 3. Couverture renforcée
+1. exécution complète sur MySQL ;
+2. concurrence sur première séquence DEM d'une année ;
+3. User/RBAC au PROMPT 5 ;
+4. conversion CRM ;
+5. Quote officiel et snapshots contractuels.
 
-Priorités :
+## Règle
 
-1. PricingService ;
-2. PaymentService ;
-3. InventoryService ;
-4. permissions/RBAC ;
-5. EquipmentService et conflits de réservation ;
-6. NumberingService ;
-7. acceptation devis → commande/événement.
-
-## 4. Cas critiques
-
-### Pricing
-- quantités ;
-- prix par personne ;
-- remises ;
-- taxes ;
-- arrondis Decimal ;
-- snapshot des prix.
-
-### Paiements
-- paiement partiel ;
-- plusieurs paiements ;
-- dépassement interdit ou contrôlé ;
-- annulation/remboursement ;
-- solde exact.
-
-### Stock
-- chaque opération crée un mouvement ;
-- perte/retour/correction ;
-- rollback en cas d'échec ;
-- cohérence du solde.
-
-### Permissions
-- accès autorisé ;
-- accès refusé par URL directe ;
-- validation sensible ;
-- rôle modifié.
-
-### Matériel
-- chevauchement temporel ;
-- quantité insuffisante ;
-- annulation libère la réservation ;
-- matériel en maintenance indisponible.
-
-## 5. Base de test
-
-SQLite mémoire convient aux tests rapides existants, mais les opérations dépendant de comportements MySQL, verrous, contraintes ou transactions concurrentes doivent aussi être testées sur MySQL avant déploiement.
-
-## 6. Règle de finition
-
-Une fonctionnalité critique n'est pas terminée sans tests de succès, refus métier et permissions principales.
+Ne jamais annoncer un test comme réussi s'il n'a pas été réellement exécuté.
