@@ -4,7 +4,7 @@
 
 > « Vos moments, notre savoir-faire. »
 
-WATO EVENTS est une plateforme web mobile first réunissant site public, catalogue commercial et, progressivement, gestion opérationnelle.
+WATO EVENTS est une plateforme web mobile first réunissant site public, catalogue commercial et gestion progressive des demandes événementielles.
 
 ## État du projet
 
@@ -13,59 +13,47 @@ WATO EVENTS est une plateforme web mobile first réunissant site public, catalog
 - PROMPT 1 — Fondations Flask + MySQL : **terminé**
 - PROMPT 2 — Identité visuelle + site public : **terminé**
 - PROMPT 3 — Catalogue métier : **terminé**
-- Prochaine étape : **PROMPT 4 — Configurateur + demandes de devis**
+- PROMPT 4 — Configurateur + demandes de devis : **terminé**
+- Prochaine étape : **PROMPT 5 — Authentification + back-office + RBAC**
 
-## Catalogue métier
+## Configurateur public
 
-Le catalogue persistant comprend :
+Route principale :
 
-- catégories ;
-- services ;
-- plats ;
-- menus ;
-- composition Menu ↔ Plat ;
-- packs ;
-- composition Pack ↔ Plat/Menu/Service.
+`/demande-de-devis`
 
-Les pages publiques utilisent désormais la base de données pour les éléments publiés.
+Le parcours collecte événement, invités, prestations, budget et coordonnées, puis affiche un récapitulatif avant envoi.
 
-Routes principales :
+Une demande enregistrée reçoit une référence :
 
-- `/services`
-- `/services/<slug>`
-- `/menus`
-- `/menus/<slug>`
-- `/packs`
-- `/packs/<slug>`
+`DEM-AAAA-000001`
 
-Administration temporaire du catalogue :
+Cette référence appartient à `QuoteRequest` et ne doit pas être confondue avec un futur devis officiel `DEV-...`.
 
-- `/admin/catalogue`
+## Estimation
 
-La protection actuelle repose temporairement sur `WATO_CATALOG_ADMIN_KEY` tant que le système User/RBAC du PROMPT 5 n'existe pas.
+`PricingService` recharge les éléments publiés depuis la base et calcule avec `Decimal` :
+
+- FIXED ;
+- PER_PERSON ;
+- PER_UNIT ;
+- PER_HOUR ;
+- ON_REQUEST.
+
+Le prix envoyé par le navigateur n'est jamais utilisé comme source de vérité.
+
+## Administration temporaire
+
+- catalogue : `/admin/catalogue`
+- demandes : `/admin/demandes-de-devis`
+
+Les deux utilisent temporairement la même protection `WATO_CATALOG_ADMIN_KEY`. Le PROMPT 5 doit remplacer ce mécanisme par User/Role/Permission/Flask-Login.
 
 ## Installation
 
 ```bash
 python -m venv .venv
 pip install -r requirements.txt
-```
-
-Activation Linux/macOS :
-
-```bash
-source .venv/bin/activate
-```
-
-Activation Windows :
-
-```powershell
-.venv\Scripts\activate
-```
-
-Copier `.env.example` vers `.env`, puis lancer les migrations :
-
-```bash
 flask --app run.py db upgrade
 flask --app run.py run
 ```
@@ -76,52 +64,18 @@ flask --app run.py run
 pytest
 ```
 
-## Configuration catalogue
-
-Variable temporaire d'accès admin :
-
-```env
-WATO_CATALOG_ADMIN_KEY=une-cle-secrete-locale
-```
-
-Ne jamais commiter la vraie valeur.
-
-## Images catalogue
-
-Formats acceptés :
-
-- jpg
-- jpeg
-- png
-- webp
-
-Les fichiers sont renommés par UUID et stockés sous `app/static/uploads/catalog/`.
-
-En absence d'image, `app/static/images/catalog-placeholder.svg` est utilisé.
-
-## Prix
-
-Unités :
-
-- FIXED
-- PER_PERSON
-- PER_UNIT
-- PER_HOUR
-- ON_REQUEST
-
-Les montants utilisent `Decimal` / `NUMERIC`. `ON_REQUEST` est affiché comme « Sur devis ».
-
 ## Documentation
 
 - [Architecture](docs/ARCHITECTURE.md)
 - [Catalogue](docs/CATALOG.md)
-- [ERD réel](docs/ERD.md)
+- [Demandes de devis](docs/QUOTE_REQUESTS.md)
+- [ERD](docs/ERD.md)
+- [Flux métier](docs/BUSINESS_FLOWS.md)
 - [Conception DB](docs/DATABASE_DESIGN.md)
-- [Design system](docs/DESIGN_SYSTEM.md)
 - [Sécurité](docs/SECURITY.md)
 - [Tests](docs/TEST_STRATEGY.md)
 - [Roadmap](docs/ROADMAP.md)
 
 ## Prochaine étape
 
-**PROMPT 4 — CONFIGURATEUR + DEMANDES DE DEVIS**
+**PROMPT 5 — AUTHENTIFICATION + BACK-OFFICE + RBAC**
