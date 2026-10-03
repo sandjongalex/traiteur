@@ -1,9 +1,31 @@
-from flask import abort, current_app, jsonify, render_template
+from secrets import token_urlsafe
+
+from flask import (
+    abort,
+    current_app,
+    flash,
+    jsonify,
+    redirect,
+    render_template,
+    request,
+    url_for,
+)
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 
 from ...extensions import db
-from ...models.catalog import Menu, MenuItem, Pack, PackDish, PackMenu, PackService, Service
+from ...forms.quote_request import QuoteRequestForm
+from ...models.catalog import (
+    Menu,
+    MenuItem,
+    Pack,
+    PackDish,
+    PackMenu,
+    PackService,
+    PricingUnit,
+    Service,
+)
+from ...models.quote_request import QuoteRequest, QuoteRequestItemType
 from ...presentation import (
     CULINARY_CATEGORIES,
     EVENT_TYPES,
@@ -13,6 +35,8 @@ from ...presentation import (
     WHY_US,
 )
 from ...services.catalog import CatalogService
+from ...services.pricing import PricingError, PricingService
+from ...services.quote_requests import DuplicateSubmissionError, QuoteRequestService
 from . import public_bp
 
 
@@ -23,6 +47,63 @@ def _page_context(title: str, description: str, **extra):
     }
     context.update(extra)
     return context
+
+
+def _selection_from_form():
+    selections = []
+    field_map = {
+        QuoteRequestItemType.SERVICE.value: "service_ids",
+        QuoteRequestItemType.MENU.value: "menu_ids",
+        QuoteRequestItemType.PACK.value: "pack_ids",
+    }
+    for item_type, field_name in field_map.items():
+        for raw_id in request.form.getlist(field_name):
+            try:
+                item_id = int(raw_id)
+            except (TypeError, ValueError):
+                raise PricingError("Sélection catalogue invalide.")
+            quantity = request.form.get(
+                f"quantity_{item_type.lower()}_{item_id}", "1"
+            )
+            selections.append(
+                {
+                    "item_type": item_type,
+                    "item_id": item_id,
+                    "quantity": quantity,
+                }
+            )
+    return selections
+
+
+def _catalog_for_configurator():
+    return {
+        "services": CatalogService.public_services(),
+        "menus": CatalogService.public_menus(),
+        "packs": CatalogService.public_packs(),
+    }
+
+
+def _preselected_ids():
+    selected = {"services": set(), "menus": set(), "packs": set()}
+    lookups = [
+        ("service", Service, "services"),
+        ("menu", Menu, "menus"),
+        ("pack", Pack, "packs"),
+    ]
+    for query_name, model, key in lookups:
+        slug = request.args.get(query_name, "").strip()
+        if not slug:
+            continue
+        item = db.session.scalar(
+            select(model).where(
+                model.slug == slug,
+                model.is_active.is_(True),
+                model.is_public.is_(True),
+            )
+        )
+        if item is not None:
+            selected[key].add(item.id)
+    return selected
 
 
 @public_bp.get("/")
@@ -89,7 +170,8 @@ def service_detail(slug):
         "public/service_detail.html",
         **_page_context(
             item.name,
-            item.short_description or f"Découvrez la prestation {item.name} proposée par WATO EVENTS à Yaoundé.",
+            item.short_description
+            or f"Découvrez la prestation {item.name} proposée par WATO EVENTS à Yaoundé.",
             service=item,
         ),
     )
@@ -197,14 +279,90 @@ def contact():
     )
 
 
-@public_bp.get("/demande-de-devis")
+@public_bp.route("/demande-de-devis", methods=["GET", "POST"])
 def quote_request():
+    catalog = _catalog_for_configurator()
+    form = QuoteRequestForm()
+
+    if request.method == "GET":
+        form.submission_token.data = token_urlsafe(24)
+        preselected = _preselected_ids()
+    else:
+        preselected = {
+            "services": {int(v) for v in request.form.getlist("service_ids") if v.isdigit()},
+            "menus": {int(v) for v in request.form.getlist("menu_ids") if v.isdigit()},
+            "packs": {int(v) for v in request.form.getlist("pack_ids") if v.isdigit()},
+        }
+
+    if form.validate_on_submit():
+        try:
+            selections = _selection_from_form()
+            estimate = PricingService.estimate_selection(
+                selections,
+                guest_count=form.guest_count.data,
+                currency=current_app.config.get("CURRENCY", "XAF"),
+            )
+            saved = QuoteRequestService.create_from_public(
+                form=form,
+                estimate=estimate,
+                submission_token=form.submission_token.data,
+            )
+            return redirect(
+                url_for(
+                    "public.quote_request_confirmation",
+                    reference=saved.reference,
+                    token=saved.public_token,
+                )
+            )
+        except PricingError as exc:
+            flash(str(exc), "error")
+        except DuplicateSubmissionError:
+            existing = db.session.scalar(
+                select(QuoteRequest).where(
+                    QuoteRequest.submission_token == form.submission_token.data
+                )
+            )
+            if existing is not None:
+                return redirect(
+                    url_for(
+                        "public.quote_request_confirmation",
+                        reference=existing.reference,
+                        token=existing.public_token,
+                    )
+                )
+            flash("Cette demande a déjà été envoyée.", "error")
+
     return render_template(
         "public/quote_request.html",
         **_page_context(
-            "Demander un devis",
-            "Préparez votre demande de devis WATO EVENTS : événement, date, lieu, invités, menus et options.",
-            event_types=EVENT_TYPES,
+            "Configurer mon événement",
+            "Configurez votre événement et obtenez une estimation indicative avant d’envoyer votre demande à WATO EVENTS.",
+            form=form,
+            services=catalog["services"],
+            menus=catalog["menus"],
+            packs=catalog["packs"],
+            preselected=preselected,
+            pricing_unit=PricingUnit,
+        ),
+    )
+
+
+@public_bp.get("/demande-de-devis/confirmation/<reference>/<token>")
+def quote_request_confirmation(reference, token):
+    saved = db.session.scalar(
+        select(QuoteRequest).where(
+            QuoteRequest.reference == reference,
+            QuoteRequest.public_token == token,
+        )
+    )
+    if saved is None:
+        abort(404)
+    return render_template(
+        "public/quote_request_confirmation.html",
+        **_page_context(
+            "Demande enregistrée",
+            "Confirmation d’enregistrement de votre demande WATO EVENTS.",
+            quote_request=saved,
         ),
     )
 
