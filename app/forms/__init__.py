@@ -1,5 +1,4 @@
 from .catalog import (
-    AdminAccessForm,
     CategoryForm,
     DishForm,
     MenuForm,
@@ -17,3 +16,6 @@ __all__ = [
     "ServiceForm",
     "QuoteRequestForm",
 ]
+
+from .auth import ChangePasswordForm, CreateUserForm, LoginForm, ResetPasswordForm, UserForm
+from .rbac import RolePermissionsForm, UserRolesForm
