@@ -4,7 +4,7 @@
 
 > « Vos moments, notre savoir-faire. »
 
-WATO EVENTS est une plateforme web **mobile first** réunissant site public, acquisition commerciale et gestion opérationnelle.
+WATO EVENTS est une plateforme web mobile first réunissant site public, catalogue commercial et, progressivement, gestion opérationnelle.
 
 ## État du projet
 
@@ -12,32 +12,39 @@ WATO EVENTS est une plateforme web **mobile first** réunissant site public, acq
 - PROMPT 0.5 — Architecture globale : **terminé**
 - PROMPT 1 — Fondations Flask + MySQL : **terminé**
 - PROMPT 2 — Identité visuelle + site public : **terminé**
-- Prochaine étape : **PROMPT 3 — Services + menus + plats + packs**
+- PROMPT 3 — Catalogue métier : **terminé**
+- Prochaine étape : **PROMPT 4 — Configurateur + demandes de devis**
 
-## Pages publiques
+## Catalogue métier
 
-- `/` — Accueil
-- `/a-propos`
+Le catalogue persistant comprend :
+
+- catégories ;
+- services ;
+- plats ;
+- menus ;
+- composition Menu ↔ Plat ;
+- packs ;
+- composition Pack ↔ Plat/Menu/Service.
+
+Les pages publiques utilisent désormais la base de données pour les éléments publiés.
+
+Routes principales :
+
 - `/services`
+- `/services/<slug>`
 - `/menus`
-- `/realisations`
-- `/contact`
-- `/demande-de-devis`
-- `/health`
+- `/menus/<slug>`
+- `/packs`
+- `/packs/<slug>`
 
-Les pages publiques reposent sur des données éditoriales temporaires centralisées dans `app/presentation.py`. Aucun modèle SQLAlchemy de catalogue n'a été créé au PROMPT 2.
+Administration temporaire du catalogue :
 
-## Stack
+- `/admin/catalogue`
 
-- Python / Flask
-- MySQL en production
-- SQLAlchemy
-- Flask-Migrate / Alembic
-- Jinja2
-- HTML5 / CSS / JavaScript
-- PythonAnywhere
+La protection actuelle repose temporairement sur `WATO_CATALOG_ADMIN_KEY` tant que le système User/RBAC du PROMPT 5 n'existe pas.
 
-## Installation locale
+## Installation
 
 ```bash
 python -m venv .venv
@@ -56,9 +63,10 @@ Activation Windows :
 .venv\Scripts\activate
 ```
 
-Copier `.env.example` vers `.env`, puis :
+Copier `.env.example` vers `.env`, puis lancer les migrations :
 
 ```bash
+flask --app run.py db upgrade
 flask --app run.py run
 ```
 
@@ -68,47 +76,52 @@ flask --app run.py run
 pytest
 ```
 
-## Assets publics
+## Configuration catalogue
 
-- CSS : `app/static/css/`
-- JavaScript : `app/static/js/`
-- images temporaires : `app/static/images/`
-- templates : `app/templates/`
+Variable temporaire d'accès admin :
 
-Les SVG actuels sont des placeholders. Remplacez-les par les photographies professionnelles WATO EVENTS en conservant les noms ou en mettant à jour les références centralisées.
+```env
+WATO_CATALOG_ADMIN_KEY=une-cle-secrete-locale
+```
 
-## Logo
+Ne jamais commiter la vraie valeur.
 
-Le wordmark/monogramme actuel est temporaire. Un futur `logo.svg` ou `logo.png` pourra remplacer facilement le composant de marque.
+## Images catalogue
 
-## Contact et WhatsApp
+Formats acceptés :
 
-Les coordonnées sont centralisées par variables d'environnement :
+- jpg
+- jpeg
+- png
+- webp
 
-- `WATO_PHONE`
-- `WATO_WHATSAPP`
-- `WATO_EMAIL`
-- `WATO_ADDRESS`
-- URLs sociales optionnelles.
+Les fichiers sont renommés par UUID et stockés sous `app/static/uploads/catalog/`.
 
-Si une valeur n'est pas configurée, elle n'est pas affichée et aucun faux contact n'est généré.
+En absence d'image, `app/static/images/catalog-placeholder.svg` est utilisé.
+
+## Prix
+
+Unités :
+
+- FIXED
+- PER_PERSON
+- PER_UNIT
+- PER_HOUR
+- ON_REQUEST
+
+Les montants utilisent `Decimal` / `NUMERIC`. `ON_REQUEST` est affiché comme « Sur devis ».
 
 ## Documentation
 
-- [Vision](docs/VISION.md)
-- [Architecture globale](docs/ARCHITECTURE.md)
-- [Design system](docs/DESIGN_SYSTEM.md)
-- [ERD](docs/ERD.md)
-- [Flux métier](docs/BUSINESS_FLOWS.md)
+- [Architecture](docs/ARCHITECTURE.md)
+- [Catalogue](docs/CATALOG.md)
+- [ERD réel](docs/ERD.md)
 - [Conception DB](docs/DATABASE_DESIGN.md)
-- [RBAC](docs/RBAC.md)
+- [Design system](docs/DESIGN_SYSTEM.md)
 - [Sécurité](docs/SECURITY.md)
-- [Stratégie de tests](docs/TEST_STRATEGY.md)
-- [PythonAnywhere](docs/PYTHONANYWHERE.md)
+- [Tests](docs/TEST_STRATEGY.md)
 - [Roadmap](docs/ROADMAP.md)
 
 ## Prochaine étape
 
-**PROMPT 3 — SERVICES + MENUS + PLATS + PACKS**
-
-Ne pas démarrer les prompts suivants par anticipation.
+**PROMPT 4 — CONFIGURATEUR + DEMANDES DE DEVIS**
