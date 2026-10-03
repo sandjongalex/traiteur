@@ -1,8 +1,17 @@
 {% extends "admin/catalog_base.html" %}
 {% block admin_content %}
-<section class="admin-page-heading"><div><p class="eyebrow">Catalogue</p><h1>{{ title }}</h1></div></section>
+<section class="admin-page-heading">
+  <div><p class="eyebrow">Catalogue</p><h1>{{ title }}</h1><p>Renseignez les informations utiles, la tarification, le visuel et l’état de publication.</p></div>
+</section>
 <form method="post" enctype="multipart/form-data" class="catalog-form" novalidate>
   {{ form.hidden_tag() }}
+  {% if item is defined and item and item.image_path %}
+  <div class="image-preview-card">
+    <img src="{{ url_for('static', filename=item.image_path) }}" alt="Visuel actuel de {{ item.name }}" width="320" height="200">
+    <div><strong>Visuel actuel</strong><small>Choisissez un nouveau fichier uniquement si vous souhaitez le remplacer.</small></div>
+  </div>
+  {% endif %}
+  <div class="form-section-heading"><span>01</span><div><h2>Informations & configuration</h2><p>Les champs affichés dépendent du type d’élément.</p></div></div>
   <div class="form-grid">
     {% for field in form if field.name not in ["csrf_token", "submit"] %}
       <div class="field {% if field.type in ['TextAreaField', 'SelectMultipleField'] %}field-wide{% endif %} {% if field.type == 'BooleanField' %}field-check{% endif %}">
@@ -12,9 +21,10 @@
           {{ field.label }}
           {% if field.type == "SelectMultipleField" %}
             {{ field(size=6) }}
-            <small>Ctrl/Cmd + clic pour sélectionner plusieurs éléments.</small>
+            <small class="helper-text">Ctrl/Cmd + clic pour sélectionner plusieurs éléments.</small>
           {% else %}
             {{ field() }}
+            {% if field.name == 'image' %}<small class="helper-text">Formats autorisés : JPG, JPEG, JFIF, PNG ou WEBP.</small>{% endif %}
           {% endif %}
         {% endif %}
         {% for error in field.errors %}<small class="field-error">{{ error }}</small>{% endfor %}
