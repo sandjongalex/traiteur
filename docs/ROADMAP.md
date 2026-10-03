@@ -25,11 +25,13 @@ Catalogue persistant, back-office temporaire, pages publiques DB, images contrô
 QuoteRequest/QuoteRequestItem, références DEM, configurateur mobile-first, PricingService, snapshots, estimation indicative, confirmation sécurisée, administration minimale et migration chaînée.
 
 ## PROMPT 5 — Authentification + back-office + RBAC
-État : **PROCHAINE ÉTAPE**.
+État : **TERMINÉ**.
 
-Mettre en place User, Role, Permission, Flask-Login et remplacer définitivement la clé admin temporaire.
+User/Role/Permission, Flask-Login, RBAC serveur, back-office commun, gestion utilisateurs/rôles, audit, seed idempotent et suppression de l’ancien bypass par clé.
 
 ## PROMPT 6 — CRM prospects / clients
+État : **PROCHAINE ÉTAPE**.
+
 Prospect, Customer, conversion et historique commercial.
 
 ## PROMPT 7 — Devis professionnels
@@ -62,4 +64,4 @@ Durcissement transversal.
 ## PROMPT 16 — Déploiement PythonAnywhere
 Déploiement production, sauvegardes et procédure de mise à jour.
 
-**Prochaine étape : PROMPT 5 — AUTHENTIFICATION + BACK-OFFICE + RBAC.**
+**Prochaine étape : PROMPT 6 — CRM PROSPECTS + CLIENTS.**
