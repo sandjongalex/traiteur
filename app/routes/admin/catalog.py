@@ -6,7 +6,7 @@ from flask import (
     flash,
     redirect,
     render_template,
-    request
+    request,
     url_for,
 )
 from sqlalchemy import select
