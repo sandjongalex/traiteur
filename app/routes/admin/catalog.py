@@ -1,6 +1,4 @@
-import hmac
 from decimal import Decimal
-from functools import wraps
 
 from flask import (
     abort,
@@ -8,8 +6,7 @@ from flask import (
     flash,
     redirect,
     render_template,
-    request,
-    session,
+    request
     url_for,
 )
 from sqlalchemy import select
@@ -18,7 +15,6 @@ from sqlalchemy.orm import selectinload
 
 from ...extensions import db
 from ...forms.catalog import (
-    AdminAccessForm,
     CategoryForm,
     DishForm,
     MenuForm,
@@ -40,48 +36,14 @@ from ...models.catalog import (
 )
 from ...utils.catalog import unique_slug
 from ...utils.files import save_catalog_image
+from ...services.rbac import permission_required
+from ...services.audit import AuditService
+from flask_login import current_user
 from . import catalog_admin_bp
 
 
-def catalog_admin_required(view):
-    @wraps(view)
-    def wrapped(*args, **kwargs):
-        if not session.get("catalog_admin"):
-            return redirect(url_for("catalog_admin.access", next=request.full_path))
-        return view(*args, **kwargs)
-
-    return wrapped
-
-
-@catalog_admin_bp.route("/access", methods=["GET", "POST"])
-def access():
-    if session.get("catalog_admin"):
-        return redirect(url_for("catalog_admin.dashboard"))
-
-    form = AdminAccessForm()
-    configured_key = current_app.config.get("WATO_CATALOG_ADMIN_KEY")
-    if form.validate_on_submit():
-        if not configured_key:
-            abort(503)
-        if hmac.compare_digest(form.access_key.data, configured_key):
-            session["catalog_admin"] = True
-            session.permanent = False
-            return redirect(url_for("catalog_admin.dashboard"))
-        flash("Clé d’accès invalide.", "error")
-
-    return render_template("admin/catalog/access.html", form=form)
-
-
-@catalog_admin_bp.post("/logout")
-@catalog_admin_required
-def logout():
-    session.pop("catalog_admin", None)
-    flash("Session catalogue fermée.", "success")
-    return redirect(url_for("catalog_admin.access"))
-
-
 @catalog_admin_bp.get("/")
-@catalog_admin_required
+@permission_required("catalog.view")
 def dashboard():
     counts = {
         "categories": db.session.scalar(select(db.func.count(Category.id))) or 0,
@@ -127,7 +89,7 @@ def _commit_or_flash(message: str):
 
 
 @catalog_admin_bp.get("/categories")
-@catalog_admin_required
+@permission_required("catalog.view")
 def category_list():
     items = db.session.scalars(
         select(Category).order_by(Category.category_type, Category.display_order, Category.name)
@@ -136,7 +98,7 @@ def category_list():
 
 
 @catalog_admin_bp.route("/categories/new", methods=["GET", "POST"])
-@catalog_admin_required
+@permission_required("catalog.edit")
 def category_create():
     form = CategoryForm()
     if form.validate_on_submit():
@@ -155,7 +117,7 @@ def category_create():
 
 
 @catalog_admin_bp.route("/categories/<int:item_id>/edit", methods=["GET", "POST"])
-@catalog_admin_required
+@permission_required("catalog.edit")
 def category_edit(item_id):
     item = db.get_or_404(Category, item_id)
     form = CategoryForm(obj=item)
@@ -172,14 +134,14 @@ def category_edit(item_id):
 
 
 @catalog_admin_bp.get("/services")
-@catalog_admin_required
+@permission_required("catalog.view")
 def service_list():
     items = db.session.scalars(select(Service).order_by(Service.display_order, Service.name)).all()
     return render_template("admin/catalog/list.html", kind="services", title="Services", items=items)
 
 
 @catalog_admin_bp.route("/services/new", methods=["GET", "POST"])
-@catalog_admin_required
+@permission_required("catalog.edit")
 def service_create():
     form = ServiceForm()
     if form.validate_on_submit():
@@ -192,7 +154,7 @@ def service_create():
 
 
 @catalog_admin_bp.route("/services/<int:item_id>/edit", methods=["GET", "POST"])
-@catalog_admin_required
+@permission_required("catalog.edit")
 def service_edit(item_id):
     item = db.get_or_404(Service, item_id)
     form = ServiceForm(obj=item)
@@ -204,7 +166,7 @@ def service_edit(item_id):
 
 
 @catalog_admin_bp.get("/plats")
-@catalog_admin_required
+@permission_required("catalog.view")
 def dish_list():
     items = db.session.scalars(
         select(Dish).options(selectinload(Dish.category)).order_by(Dish.display_order, Dish.name)
@@ -222,7 +184,7 @@ def _dish_category_choices():
 
 
 @catalog_admin_bp.route("/plats/new", methods=["GET", "POST"])
-@catalog_admin_required
+@permission_required("catalog.edit")
 def dish_create():
     form = DishForm()
     form.category_id.choices = _dish_category_choices()
@@ -237,7 +199,7 @@ def dish_create():
 
 
 @catalog_admin_bp.route("/plats/<int:item_id>/edit", methods=["GET", "POST"])
-@catalog_admin_required
+@permission_required("catalog.edit")
 def dish_edit(item_id):
     item = db.get_or_404(Dish, item_id)
     form = DishForm(obj=item)
@@ -268,7 +230,7 @@ def _sync_menu_items(menu: Menu, dish_ids: list[int]):
 
 
 @catalog_admin_bp.get("/menus")
-@catalog_admin_required
+@permission_required("catalog.view")
 def menu_list():
     items = db.session.scalars(
         select(Menu).options(selectinload(Menu.items).selectinload(MenuItem.dish)).order_by(Menu.display_order, Menu.name)
@@ -277,7 +239,7 @@ def menu_list():
 
 
 @catalog_admin_bp.route("/menus/new", methods=["GET", "POST"])
-@catalog_admin_required
+@permission_required("catalog.edit")
 def menu_create():
     form = MenuForm()
     form.dish_ids.choices = _published_choices(Dish)
@@ -293,7 +255,7 @@ def menu_create():
 
 
 @catalog_admin_bp.route("/menus/<int:item_id>/edit", methods=["GET", "POST"])
-@catalog_admin_required
+@permission_required("catalog.edit")
 def menu_edit(item_id):
     item = db.session.get(Menu, item_id)
     if item is None:
@@ -334,14 +296,14 @@ def _sync_pack(pack: Pack, dish_ids: list[int], menu_ids: list[int], service_ids
 
 
 @catalog_admin_bp.get("/packs")
-@catalog_admin_required
+@permission_required("catalog.view")
 def pack_list():
     items = db.session.scalars(select(Pack).order_by(Pack.display_order, Pack.name)).all()
     return render_template("admin/catalog/list.html", kind="packs", title="Packs", items=items)
 
 
 @catalog_admin_bp.route("/packs/new", methods=["GET", "POST"])
-@catalog_admin_required
+@permission_required("catalog.edit")
 def pack_create():
     form = PackForm()
     form.dish_ids.choices = _published_choices(Dish)
@@ -359,7 +321,7 @@ def pack_create():
 
 
 @catalog_admin_bp.route("/packs/<int:item_id>/edit", methods=["GET", "POST"])
-@catalog_admin_required
+@permission_required("catalog.edit")
 def pack_edit(item_id):
     item = db.session.get(Pack, item_id)
     if item is None:
@@ -382,7 +344,7 @@ def pack_edit(item_id):
 
 
 @catalog_admin_bp.post("/<kind>/<int:item_id>/toggle/<field>")
-@catalog_admin_required
+@permission_required("catalog.validate")
 def toggle(kind, item_id, field):
     mapping = {
         "services": Service,
@@ -398,6 +360,7 @@ def toggle(kind, item_id, field):
 
     item = db.get_or_404(mapping[kind], item_id)
     setattr(item, field, not bool(getattr(item, field)))
+    AuditService.log("catalog.state_change", type(item).__name__, item.id, f"{field} modifié", user=current_user)
     if _commit_or_flash("État mis à jour."):
         return redirect(request.referrer or url_for("catalog_admin.dashboard"))
     return redirect(request.referrer or url_for("catalog_admin.dashboard"))
