@@ -108,6 +108,7 @@ def _preselected_ids():
 
 @public_bp.get("/")
 def index():
+    homepage_services = CatalogService.public_services()[:4]
     featured_services = CatalogService.public_services(featured=True)
     featured_menus = CatalogService.public_menus(featured=True)
     featured_packs = CatalogService.public_packs(featured=True)
@@ -117,6 +118,7 @@ def index():
         **_page_context(
             "Traiteur & Événementiel à Yaoundé",
             "WATO EVENTS accompagne vos réceptions à Yaoundé avec une approche culinaire et événementielle professionnelle.",
+            homepage_services=homepage_services,
             featured_services=featured_services,
             featured_menus=featured_menus,
             featured_packs=featured_packs,
