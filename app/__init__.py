@@ -31,9 +31,9 @@ def create_app(config_name: str | None = None) -> Flask:
         try: return db.session.get(User,int(user_id))
         except (TypeError,ValueError): return None
 
-    from .routes.admin import admin_auth_bp,admin_core_bp,audit_admin_bp,catalog_admin_bp,quote_request_admin_bp,roles_admin_bp,users_admin_bp
+    from .routes.admin import admin_auth_bp,admin_core_bp,audit_admin_bp,catalog_admin_bp,equipment_admin_bp,quote_request_admin_bp,roles_admin_bp,users_admin_bp
     from .routes.public import public_bp
-    for bp in (public_bp,admin_auth_bp,admin_core_bp,catalog_admin_bp,quote_request_admin_bp,users_admin_bp,roles_admin_bp,audit_admin_bp): app.register_blueprint(bp)
+    for bp in (public_bp,admin_auth_bp,admin_core_bp,catalog_admin_bp,equipment_admin_bp,quote_request_admin_bp,users_admin_bp,roles_admin_bp,audit_admin_bp): app.register_blueprint(bp)
 
     @app.before_request
     def enforce_admin_account_state():
@@ -84,6 +84,7 @@ def _register_cli(app):
     from .models.auth import Role,User
     from .services.audit import AuditService
     from .services.rbac import RBACService
+    from .models.equipment import EquipmentCategory
 
     @app.cli.command("db-check")
     def db_check():
@@ -92,6 +93,28 @@ def _register_cli(app):
     @app.cli.command("seed-rbac")
     def seed_rbac():
         roles,permissions=RBACService.seed(); click.echo(f"RBAC prêt : {roles} rôle(s) et {permissions} permission(s) créé(s).")
+
+    @app.cli.command("seed-equipment-categories")
+    def seed_equipment_categories():
+        defaults = [
+            ("CUISINE", "Cuisine"),
+            ("SERVICE", "Service & vaisselle"),
+            ("MOBILIER", "Mobilier"),
+            ("TENTES", "Tentes & abris"),
+            ("FROID", "Froid & conservation"),
+            ("TRANSPORT", "Transport & manutention"),
+            ("DECORATION", "Décoration"),
+            ("ELECTRICITE", "Électricité & éclairage"),
+            ("DIVERS", "Divers"),
+        ]
+        created = 0
+        for code, name in defaults:
+            category = db.session.scalar(select(EquipmentCategory).where(EquipmentCategory.code == code))
+            if category is None:
+                db.session.add(EquipmentCategory(code=code, name=name, is_active=True))
+                created += 1
+        db.session.commit()
+        click.echo(f"Catégories matériel prêtes : {created} créée(s).")
 
     @app.cli.command("create-superadmin")
     @click.option("--email",prompt=True)
