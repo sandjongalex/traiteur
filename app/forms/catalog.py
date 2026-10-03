@@ -17,7 +17,7 @@ from wtforms.validators import InputRequired, Length, NumberRange, Optional, Val
 
 from ..models.catalog import CategoryType, PricingUnit
 
-IMAGE_EXTENSIONS = ["jpg", "jpeg", "png", "webp"]
+IMAGE_EXTENSIONS = ["jpg", "jpeg", "jfif", "png", "webp"]
 
 
 def _pricing_choices():
@@ -61,7 +61,7 @@ class BaseCatalogItemForm(FlaskForm):
         "Image",
         validators=[
             Optional(),
-            FileAllowed(IMAGE_EXTENSIONS, "Format autorisé : jpg, jpeg, png ou webp."),
+            FileAllowed(IMAGE_EXTENSIONS, "Format autorisé : jpg, jpeg, jfif, png ou webp."),
         ],
     )
     is_featured = BooleanField("Mettre en avant")
