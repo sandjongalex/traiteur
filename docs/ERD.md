@@ -65,3 +65,36 @@ erDiagram
 ## Non implémenté
 
 `Quote`, `QuoteItem`, `Prospect`, `Customer`, `Order`, `Event`, `Payment` et les domaines opérationnels restent futurs.
+
+
+## Authentification/RBAC — implémenté au PROMPT 5
+
+```mermaid
+erDiagram
+ USER }o--o{ ROLE : user_roles
+ ROLE }o--o{ PERMISSION : role_permissions
+ USER ||--o{ AUDIT_LOG : produces
+ USER { int id PK
+ string email UK
+ string password_hash
+ bool is_active
+ bool must_change_password
+ }
+ ROLE { int id PK
+ string code UK
+ bool is_system
+ bool is_active
+ }
+ PERMISSION { int id PK
+ string code UK
+ }
+ AUDIT_LOG { int id PK
+ int user_id FK
+ string action
+ string resource_type
+ string resource_id
+ datetime created_at
+ }
+```
+
+User est un compte d’accès applicatif. **User ≠ Employee** ; Employee reste futur au PROMPT 12.
