@@ -5,7 +5,7 @@ from flask import current_app
 from werkzeug.datastructures import FileStorage
 from werkzeug.utils import secure_filename
 
-ALLOWED_CATALOG_IMAGE_EXTENSIONS = {"jpg", "jpeg", "png", "webp"}
+ALLOWED_CATALOG_IMAGE_EXTENSIONS = {"jpg", "jpeg", "jfif", "png", "webp"}
 ALLOWED_CATALOG_IMAGE_MIMES = {"image/jpeg", "image/png", "image/webp"}
 
 
