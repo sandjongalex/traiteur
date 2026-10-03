@@ -24,4 +24,4 @@ jobs:
         run: python -m compileall app
 
       - name: Run tests
-        run: pytest
+        run: PYTHONPATH=. pytest
