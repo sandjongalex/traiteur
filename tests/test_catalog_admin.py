@@ -4,30 +4,22 @@ from io import BytesIO
 from app.extensions import db
 from app.models.catalog import PricingUnit, Service
 from app.utils.files import save_catalog_image
-
-
-def _login_catalog(client):
-    return client.post(
-        "/admin/catalogue/access",
-        data={"access_key": "testing-catalog-key"},
-        follow_redirects=False,
-    )
+from tests.helpers import create_user, login
 
 
 def test_admin_catalog_requires_access(client):
     response = client.get("/admin/catalogue/", follow_redirects=False)
     assert response.status_code in {301, 302}
-    assert "/admin/catalogue/access" in response.headers["Location"]
+    assert "/admin/login" in response.headers["Location"]
 
 
-def test_admin_access_accepts_configured_key(client):
-    response = _login_catalog(client)
+def test_admin_access_with_rbac(client, app):
+    create_user()
+    response = login(client)
     assert response.status_code in {301, 302}
-    assert "/admin/catalogue/" in response.headers["Location"]
-
 
 def test_admin_can_create_service(client, app):
-    _login_catalog(client)
+    create_user(); login(client)
 
     response = client.post(
         "/admin/catalogue/services/new",
@@ -57,7 +49,7 @@ def test_admin_can_toggle_publication(client, app):
     db.session.add(service)
     db.session.commit()
 
-    _login_catalog(client)
+    create_user(); login(client)
     response = client.post(
         f"/admin/catalogue/services/{service.id}/toggle/is_public",
         follow_redirects=False,
