@@ -10,6 +10,7 @@
   <meta property="og:description" content="{{ meta_description }}">
   <meta property="og:type" content="website">
   {% if site.og_image %}<meta property="og:image" content="{{ site.og_image }}">{% endif %}
+  <script type="application/ld+json">{{ structured_data|tojson }}</script>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/public.css') }}">
   {% block head %}{% endblock %}
