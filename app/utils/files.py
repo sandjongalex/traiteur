@@ -6,6 +6,7 @@ from werkzeug.datastructures import FileStorage
 from werkzeug.utils import secure_filename
 
 ALLOWED_CATALOG_IMAGE_EXTENSIONS = {"jpg", "jpeg", "png", "webp"}
+ALLOWED_CATALOG_IMAGE_MIMES = {"image/jpeg", "image/png", "image/webp"}
 
 
 def save_catalog_image(file: FileStorage | None) -> str | None:
@@ -19,6 +20,9 @@ def save_catalog_image(file: FileStorage | None) -> str | None:
     extension = safe_name.rsplit(".", 1)[1].lower()
     if extension not in ALLOWED_CATALOG_IMAGE_EXTENSIONS:
         raise ValueError("Format d’image non autorisé.")
+
+    if file.mimetype and file.mimetype.lower() not in ALLOWED_CATALOG_IMAGE_MIMES:
+        raise ValueError("Type MIME d’image non autorisé.")
 
     upload_root = Path(current_app.config["UPLOAD_FOLDER"])
     catalog_dir = upload_root / "catalog"
