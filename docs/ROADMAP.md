@@ -82,4 +82,4 @@ L'ordre est retenu avec les précisions suivantes :
 
 Chaque sprint doit laisser une application fonctionnelle et préserver les données existantes.
 
-**Prochaine étape : PROMPT 2 — IDENTITÉ VISUELLE + SITE PUBLIC.**
+**Prochaine étape : PROMPT 3 — SERVICES + MENUS + PLATS + PACKS.**
