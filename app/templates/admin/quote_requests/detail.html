@@ -1,0 +1,57 @@
+{% extends "admin/catalog_base.html" %}
+{% block admin_content %}
+<section class="admin-page-heading admin-page-heading-row">
+  <div><p class="eyebrow">Demande commerciale</p><h1>{{ item.reference }}</h1><p>Créée le {{ item.created_at.strftime("%d/%m/%Y à %H:%M") }} · Source {{ item.source }}</p></div>
+  <a class="btn btn-outline" href="{{ url_for('quote_request_admin.request_list') }}">Retour à la liste</a>
+</section>
+
+<div class="request-admin-grid">
+  <section class="admin-panel">
+    <h2>Événement</h2>
+    <dl class="detail-list">
+      <div><dt>Type</dt><dd>{{ item.event_type }}</dd></div>
+      <div><dt>Date</dt><dd>{{ item.event_date.strftime("%d/%m/%Y") }}{% if item.event_time %} · {{ item.event_time.strftime("%H:%M") }}{% endif %}</dd></div>
+      <div><dt>Lieu</dt><dd>{{ item.location }}</dd></div>
+      <div><dt>Invités</dt><dd>{{ item.guest_count }}</dd></div>
+      <div><dt>Budget</dt><dd>{% if item.budget_min %}{{ item.budget_min|money }}{% else %}—{% endif %} → {% if item.budget_max %}{{ item.budget_max|money }}{% else %}—{% endif %}</dd></div>
+    </dl>
+  </section>
+
+  <section class="admin-panel">
+    <h2>Coordonnées</h2>
+    <dl class="detail-list">
+      <div><dt>Nom</dt><dd>{{ item.customer_name }}</dd></div>
+      <div><dt>Téléphone</dt><dd>{{ item.phone or "—" }}</dd></div>
+      <div><dt>WhatsApp</dt><dd>{{ item.whatsapp or "—" }}</dd></div>
+      <div><dt>Email</dt><dd>{{ item.email or "—" }}</dd></div>
+    </dl>
+  </section>
+</div>
+
+<section class="admin-panel">
+  <h2>Sélections et snapshots</h2>
+  {% if item.items %}
+  <div class="admin-table-wrap"><table class="admin-table">
+    <thead><tr><th>Type</th><th>Élément</th><th>Quantité</th><th>Prix snapshot</th><th>Sous-total</th></tr></thead>
+    <tbody>{% for line in item.items %}<tr>
+      <td>{{ line.item_type }}</td><td>{{ line.label_snapshot }}</td><td>{{ line.quantity }}</td>
+      <td>{{ line.unit_price_snapshot|money(line.pricing_unit_snapshot) }}</td>
+      <td>{% if line.estimated_subtotal is none %}À confirmer{% else %}{{ line.estimated_subtotal|money }}{% endif %}</td>
+    </tr>{% endfor %}</tbody>
+  </table></div>
+  {% else %}<p>Aucun élément catalogue sélectionné.</p>{% endif %}
+  <p><strong>{% if item.has_on_request_items %}Estimation partielle à partir de {% else %}Estimation indicative : {% endif %}{{ item.estimated_total|money }}</strong></p>
+</section>
+
+{% if item.notes %}<section class="admin-panel"><h2>Informations complémentaires</h2><p class="prewrap">{{ item.notes }}</p></section>{% endif %}
+
+<section class="admin-panel">
+  <h2>Statut</h2>
+  <form method="post" action="{{ url_for('quote_request_admin.update_status', item_id=item.id) }}" class="status-form">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <select name="status" aria-label="Nouveau statut">{% for status in statuses %}<option value="{{ status.value }}" {{ "selected" if item.status == status.value else "" }}>{{ status.value }}</option>{% endfor %}</select>
+    <button class="btn btn-primary" type="submit">Mettre à jour</button>
+  </form>
+  <p class="admin-hint">Aucune suppression définitive n’est proposée. Utilisez ARCHIVED si la demande doit sortir du flux actif.</p>
+</section>
+{% endblock %}
