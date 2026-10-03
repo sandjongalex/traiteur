@@ -1,0 +1,57 @@
+{% extends "admin/base.html" %}
+{% block admin_content %}
+<section class="admin-page-heading admin-page-heading-row">
+  <div>
+    <p class="eyebrow">Matériel</p>
+    <h1>Équipements WATO EVENTS</h1>
+    <p>Suivez les tentes, caisses, couverts, marmites chauffantes et tout le matériel réutilisable.</p>
+  </div>
+  {% if current_user.has_permission('equipment.create') %}
+  <a class="btn btn-primary" href="{{ url_for('equipment_admin.item_create') }}">+ Ajouter du matériel</a>
+  {% endif %}
+</section>
+
+<div class="admin-kpi-grid equipment-kpi-grid">
+  <a class="admin-action-card" href="{{ url_for('equipment_admin.item_list') }}"><span>Types de matériel</span><strong>{{ total_types }}</strong><small>Voir l’inventaire →</small></a>
+  <div class="equipment-stat"><span>Total unités</span><strong>{{ total_units }}</strong></div>
+  <div class="equipment-stat"><span>Disponibles</span><strong>{{ available_units }}</strong></div>
+  <div class="equipment-stat"><span>En sortie</span><strong>{{ out_units }}</strong></div>
+  <div class="equipment-stat"><span>Maintenance</span><strong>{{ maintenance_units }}</strong></div>
+</div>
+
+<section class="admin-quick-actions">
+  <h2>Accès rapide</h2>
+  <div class="admin-quick-actions-grid">
+    <a class="btn btn-secondary" href="{{ url_for('equipment_admin.item_list') }}">Inventaire matériel</a>
+    <a class="btn btn-secondary" href="{{ url_for('equipment_admin.category_list') }}">Catégories</a>
+    {% if current_user.has_permission('equipment.create') %}
+    <a class="btn btn-secondary" href="{{ url_for('equipment_admin.item_create') }}">+ Nouveau matériel</a>
+    <a class="btn btn-secondary" href="{{ url_for('equipment_admin.category_create') }}">+ Nouvelle catégorie</a>
+    {% endif %}
+  </div>
+</section>
+
+{% if items %}
+<div class="admin-table-wrap" style="margin-top:1.2rem">
+<table class="admin-table">
+<thead><tr><th>Matériel</th><th>Catégorie</th><th>Total</th><th>Disponible</th><th>Sortie</th><th>Maintenance</th><th>Action</th></tr></thead>
+<tbody>
+{% for item in items %}
+{% set b = balances[item.id] %}
+<tr>
+  <td data-label="Matériel"><strong>{{ item.name }}</strong><small>{{ item.reference or item.unit }}</small></td>
+  <td data-label="Catégorie">{{ item.category.name }}</td>
+  <td data-label="Total">{{ b.total }}</td>
+  <td data-label="Disponible"><span class="badge {{ 'badge-live' if b.available > 0 else 'badge-muted' }}">{{ b.available }}</span></td>
+  <td data-label="Sortie">{{ b.out }}</td>
+  <td data-label="Maintenance">{{ b.maintenance }}</td>
+  <td data-label="Action" class="admin-actions"><a href="{{ url_for('equipment_admin.item_detail', item_id=item.id) }}">Ouvrir</a></td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+{% else %}
+<div class="admin-empty" style="margin-top:1.2rem"><h2>Aucun matériel enregistré.</h2><p>Commencez par créer vos catégories puis ajoutez vos équipements.</p></div>
+{% endif %}
+{% endblock %}
