@@ -4,9 +4,10 @@ Plateforme Flask/SQLAlchemy mobile-first pour WATO EVENTS — Traiteur & Événe
 
 ## État
 PROMPT 0 à 5 : **terminés**.  
-PROMPT 5.5 — SQLite + environnement PythonAnywhere gratuit : **terminé côté code/documentation**.
+PROMPT 5.5 — SQLite + environnement PythonAnywhere gratuit : **terminé côté code/documentation**.  
+PROMPT 5.6 — Refonte UI/UX premium + design system : **implémenté côté code/documentation**.
 
-Prochaine étape opérationnelle : **TEST FONCTIONNEL COMPLET DE WATO EVENTS SUR PYTHONANYWHERE**.
+Prochaine étape : **VALIDATION VISUELLE ET FONCTIONNELLE DE WATO EVENTS**.
 
 ## Base de données
 
@@ -70,3 +71,8 @@ pytest
 ```
 
 Les tests SQLite couvrent notamment migrations sur base vierge, FK, WAL/timeout, Decimal, RBAC et création du super-admin.
+
+
+## UI / UX
+
+La direction visuelle, les tokens, le responsive, le configurateur et le shell admin sont documentés dans [docs/UI_UX.md](docs/UI_UX.md).
