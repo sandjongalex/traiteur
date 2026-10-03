@@ -5,7 +5,9 @@
   <h1>Merci. Votre demande a bien été enregistrée.</h1>
   <p>WATO EVENTS étudiera votre besoin avant d’établir une proposition définitive. Cette demande n’est pas encore un devis commercial.</p>
   <div class="confirmation-reference"><span>Votre référence</span><strong>{{ quote_request.reference }}</strong></div>
-  {% if quote_request.has_on_request_items %}<p>Certains éléments nécessitent une étude complémentaire. L’estimation connue enregistrée est à partir de <strong>{{ quote_request.estimated_total|money }}</strong>.</p>{% else %}<p>L’estimation indicative enregistrée est de <strong>{{ quote_request.estimated_total|money }}</strong>.</p>{% endif %}
+  {% if quote_request.has_on_request_items and quote_request.estimated_total > 0 %}<p>Certains éléments nécessitent une étude complémentaire. L’estimation connue enregistrée est à partir de <strong>{{ quote_request.estimated_total|money }}</strong>.</p>
+  {% elif quote_request.has_on_request_items %}<p>Le montant sera confirmé après étude de votre demande.</p>
+  {% else %}<p>L’estimation indicative enregistrée est de <strong>{{ quote_request.estimated_total|money }}</strong>.</p>{% endif %}
   <p class="privacy-note">Cette page n’affiche volontairement aucune coordonnée personnelle.</p>
   <a class="btn btn-primary" href="{{ url_for('public.index') }}">Retour à l’accueil</a>
 </div></section>
