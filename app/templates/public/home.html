@@ -1,8 +1,27 @@
 {% extends "base.html" %}{% block content %}
-<section class="hero"><div class="container hero-grid">
-<div class="hero-copy" data-reveal><p class="eyebrow">Traiteur & Événementiel · Yaoundé</p><h1>Vos moments, notre <em>savoir-faire.</em></h1><p class="hero-lead">Traiteur & événementiel à Yaoundé : cuisine, service et organisation pour des réceptions privées et professionnelles pensées avec soin.</p><div class="hero-actions"><a class="btn btn-gold" href="{{ url_for('public.quote_request') }}">Configurer mon événement</a><a class="btn btn-outline" href="{{ url_for('public.services') }}">Découvrir nos prestations</a></div><div class="hero-note"><span>WATO EVENTS</span><span>Yaoundé, Cameroun</span></div></div>
-<div class="hero-visual" data-reveal><img src="{{ url_for('static', filename='images/hero-wato.svg') }}" alt="Composition visuelle temporaire représentant une réception élégante WATO EVENTS" width="800" height="920"><div class="hero-card"><strong>Vos moments,</strong><span>notre savoir-faire.</span></div></div>
-</div></section>
+<section class="hero">
+  <div class="container hero-grid">
+    <div class="hero-copy" data-reveal>
+      <p class="eyebrow hero-eyebrow">Traiteur & événementiel premium à Yaoundé</p>
+      <h1>Des réceptions élégantes,<br><em>des saveurs qui marquent les esprits.</em></h1>
+      <p class="hero-lead">Wato Events accompagne vos mariages, anniversaires, cocktails et événements professionnels avec une cuisine soignée, un service professionnel et une présentation élégante.</p>
+      <div class="hero-actions">
+        <a class="btn btn-gold hero-primary-cta" href="{{ url_for('public.quote_request') }}">Configurer mon événement</a>
+        <a class="btn btn-outline hero-secondary-cta" href="{{ url_for('public.menus') }}">Découvrir nos menus</a>
+      </div>
+      <p class="hero-location">Yaoundé, Cameroun</p>
+    </div>
+    <div class="hero-visual" data-reveal>
+      <div class="hero-visual-frame">
+        <img src="{{ url_for('static', filename='images/hero-wato.svg') }}" alt="Illustration graphique neutre évoquant une réception élégante, le dressage de table et la gastronomie événementielle" width="800" height="650">
+      </div>
+      <div class="hero-card" aria-hidden="true">
+        <span>WATO EVENTS</span>
+        <strong>Traiteur · Réception · Élégance</strong>
+      </div>
+    </div>
+  </div>
+</section>
 <section class="trust-strip" aria-label="Nos engagements"><div class="container trust-grid"><span>Service professionnel</span><span>Cuisine soignée</span><span>Événements sur mesure</span><span>Yaoundé</span></div></section>
 
 <section class="section"><div class="container">
