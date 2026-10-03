@@ -8,153 +8,71 @@ Conventions :
 
 - PK technique `id` ;
 - FK explicites ;
-- `created_at`, `updated_at` lorsque pertinent ;
-- `created_by` pour les objets sensibles ;
-- montants en `NUMERIC/DECIMAL` ;
-- enums applicatifs ou colonnes de statut validées ;
-- index sur relations, statuts, dates et recherches fréquentes.
+- timestamps `created_at`, `updated_at` ;
+- montants `NUMERIC/DECIMAL` ;
+- contraintes DB pour l'intégrité ;
+- index sur relations et filtres publics.
 
-## 2. Entités cibles
+## 2. Domaine catalogue implémenté
 
-### Identité et sécurité
-- User
-- Role
-- Permission
-- AuditLog
+### catalog_categories
+Catégories typées via `category_type` : DISH, SERVICE, MENU, PACK.
 
-### Configuration
-- BusinessSettings
+### catalog_services
+Prestations vendables avec prix optionnel, pricing_unit, publication et mise en avant.
 
-### CRM
-- Prospect
-- Customer
+### catalog_dishes
+Plats vendables, catégorie optionnelle et mêmes contrôles de publication.
 
-### Catalogue
-- EventType
-- Service
-- Dish
-- Menu
-- MenuItem
-- Pack
+### catalog_menus
+Compositions culinaires avec prix, unité de tarification et minimum de personnes.
 
-### Commerce
-- QuoteRequest
-- Quote
-- QuoteItem
-- Order
-- OrderItem
+### catalog_menu_items
+Association Menu ↔ Dish avec quantité, section, ordre et caractère optionnel.
 
-### Opérations
-- Event
-- Employee
-- EventAssignment
-- Equipment
-- EquipmentReservation
+### catalog_packs
+Offres groupées avec prix, minimum de personnes et publication.
 
-### Finance
-- Payment
-- Invoice
-- InvoiceItem
+### catalog_pack_dishes / catalog_pack_menus / catalog_pack_services
+Associations explicites du contenu d'un pack.
 
-### Approvisionnement
-- Ingredient
-- StockMovement
-- Supplier
-- Purchase
-- PurchaseItem
+## 3. Argent
 
-### Contenu / communication
-- GalleryItem
-- Notification
+Catalogue :
 
-## 3. Snapshots commerciaux
+- Python : `Decimal` ;
+- SQL : `NUMERIC(14,2)` ;
+- quantités d'association : `NUMERIC(10,2)`.
 
-Les lignes de devis, commande et facture conservent les données commerciales utilisées au moment de l'émission :
+Aucun `float`.
 
-- description ;
-- type d'élément ;
-- quantité ;
-- unité ;
-- prix unitaire ;
-- remise ;
-- taxe ;
-- total.
+## 4. Contraintes importantes
 
-Une modification future du catalogue ne doit pas altérer un document historique.
+- slug unique par table ;
+- prix >= 0 ou NULL ;
+- display_order >= 0 ;
+- minimum_people > 0 ou NULL ;
+- quantity > 0 ;
+- pricing_unit limité aux valeurs supportées ;
+- category_type limité aux valeurs supportées.
 
-## 4. Argent
+## 5. Cascades
 
-Exemple recommandé : `NUMERIC(14, 2)` pour les montants génériques, même si XAF est généralement sans décimales dans l'usage. Cela évite d'enfermer le système dans une hypothèse de devise.
+- Menu → MenuItem : `CASCADE` car MenuItem est une composition interne du Menu ;
+- Pack → associations : `CASCADE` pour la même raison ;
+- Dish/Menu/Service référencés depuis associations : `RESTRICT` afin d'éviter une suppression accidentelle de l'élément source ;
+- Category → Dish : `RESTRICT`.
 
-Python : `Decimal` uniquement.
+Les offres métier sont destinées à être désactivées/dépubliées plutôt que supprimées.
 
-## 5. Stock
+## 6. Performance
 
-`StockMovement` contient au minimum :
+Les listes publiques Menu/Pack utilisent `selectinload` pour éviter les N+1 sur leurs compositions.
 
-- ingredient_id ;
-- type ;
-- quantity_delta ;
-- unit_cost optionnel ;
-- source_type/source_id ou références explicites ;
-- occurred_at ;
-- created_by ;
-- note.
+Les index publics combinent notamment :
 
-Le stock théorique est la somme des mouvements signés.
+`is_active, is_public, display_order`.
 
-## 6. Réservations matériel
+## 7. Évolution future
 
-`EquipmentReservation` contient :
-
-- event_id ;
-- equipment_id ;
-- quantity ;
-- starts_at ;
-- ends_at ;
-- status.
-
-Index composite recommandé sur `equipment_id, starts_at, ends_at, status`.
-
-## 7. Affectations personnel
-
-`EventAssignment` contient :
-
-- event_id ;
-- employee_id ;
-- mission ;
-- starts_at ;
-- ends_at ;
-- cost ;
-- status.
-
-La disponibilité est contrôlée par chevauchement temporel.
-
-## 8. Numérotation commerciale
-
-Prévoir une petite table de séquences métier :
-
-- document_type ;
-- year ;
-- last_value.
-
-Contrainte unique `(document_type, year)`. Incrément sous transaction/verrou afin d'éviter les collisions.
-
-## 9. Archivage
-
-Préférer `archived_at` ou statuts terminaux pour les données métier ayant une histoire. Les paiements, factures, mouvements de stock et audits sont immuables ou corrigés par opérations compensatoires.
-
-## 10. Index prioritaires
-
-- User.email / username ;
-- Customer.phone, email ;
-- Prospect.phone, email ;
-- Quote.reference, status, valid_until ;
-- Order.reference, status ;
-- Event.reference, event_date, status ;
-- Payment.created_at/status ;
-- Invoice.reference/status ;
-- StockMovement.ingredient_id + occurred_at ;
-- Purchase.supplier_id + date ;
-- EquipmentReservation.equipment_id + fenêtre ;
-- EventAssignment.employee_id + fenêtre.
+QuoteItem n'existe pas encore. Il devra capturer un snapshot de label, quantité, prix unitaire, remise, taxe et total afin qu'un changement du catalogue ne modifie jamais un devis historique.
