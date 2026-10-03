@@ -47,6 +47,7 @@ class BaseConfig:
     WATO_INSTAGRAM_URL = _optional_env("WATO_INSTAGRAM_URL")
     WATO_TIKTOK_URL = _optional_env("WATO_TIKTOK_URL")
     WATO_OG_IMAGE = _optional_env("WATO_OG_IMAGE")
+    WATO_CATALOG_ADMIN_KEY = _optional_env("WATO_CATALOG_ADMIN_KEY")
 
     # Temporary catalogue-only gate until PROMPT 5 introduces real User/RBAC.
     WATO_CATALOG_ADMIN_KEY = _optional_env("WATO_CATALOG_ADMIN_KEY")
@@ -61,6 +62,7 @@ class TestingConfig(BaseConfig):
     SECRET_KEY = "testing-secret-key"
     SQLALCHEMY_DATABASE_URI = "sqlite+pysqlite:///:memory:"
     WTF_CSRF_ENABLED = False
+    WATO_CATALOG_ADMIN_KEY = "testing-catalog-key"
     WATO_CATALOG_ADMIN_KEY = "testing-catalog-key"
 
 
