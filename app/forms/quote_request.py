@@ -14,7 +14,6 @@ from wtforms import (
     TimeField,
 )
 from wtforms.validators import (
-    Email,
     InputRequired,
     Length,
     NumberRange,
@@ -63,7 +62,7 @@ class QuoteRequestForm(FlaskForm):
     phone = StringField("Téléphone", validators=[Optional(), Length(max=40)])
     whatsapp = StringField("WhatsApp", validators=[Optional(), Length(max=40)])
     email = EmailField(
-        "Email", validators=[Optional(), Email(), Length(max=254)]
+        "Email", validators=[Optional(), Length(max=254)]
     )
 
     submission_token = HiddenField(validators=[InputRequired()])
@@ -84,6 +83,9 @@ class QuoteRequestForm(FlaskForm):
             )
 
     def validate_email(self, field):
+        value = _clean_contact(field.data)
+        if value and not re.fullmatch(r"[^@\s]+@[^@\s]+\.[^@\s]+", value):
+            raise ValidationError("Adresse email invalide.")
         if not any(
             _clean_contact(value)
             for value in (self.phone.data, self.whatsapp.data, field.data)
