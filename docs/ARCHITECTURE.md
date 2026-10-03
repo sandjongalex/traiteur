@@ -268,3 +268,28 @@ Le public lit le catalogue publié et la galerie sans accéder aux modèles inte
 ## 18. PythonAnywhere
 
 Architecture compatible avec Flask WSGI, MySQL, virtualenv, statiques et uploads locaux. Aucun composant distribué obligatoire.
+
+
+## 19. État implémenté — Catalogue (PROMPT 3)
+
+Le domaine Catalogue est désormais réellement implémenté dans le monolithe :
+
+- `app/models/catalog.py` ;
+- `app/services/catalog.py` ;
+- `app/forms/catalog.py` ;
+- `app/routes/admin/catalog.py` ;
+- routes publiques dynamiques dans `app/routes/public/views.py`.
+
+Décisions effectives :
+
+- Category générique typée ;
+- prix Decimal/NUMERIC ;
+- Service/Dish/Menu/Pack séparés ;
+- MenuItem comme association Menu ↔ Dish ;
+- PackDish/PackMenu/PackService plutôt qu'un PackItem polymorphique ;
+- slugs publics uniques ;
+- publication distincte de l'activation ;
+- chargement relationnel avec selectinload pour les listes composées ;
+- uploads catalogue locaux, contrôlés et remplaçables plus tard par une abstraction cloud.
+
+Le back-office catalogue utilise une clé d'accès temporaire uniquement parce que User/RBAC n'est pas encore implémenté. Cette protection doit être remplacée au PROMPT 5, sans créer un second système parallèle.
