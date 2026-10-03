@@ -1,0 +1,13 @@
+{% extends "admin/base.html" %}
+{% block admin_content %}
+<section class="admin-page-heading"><p class="eyebrow">Matériel · Mouvement</p><h1>{{ item.name }}</h1><p>Disponible : <strong>{{ balance.available }} {{ item.unit }}</strong> · En sortie : <strong>{{ balance.out }}</strong> · Maintenance : <strong>{{ balance.maintenance }}</strong></p></section>
+<form method="post" class="catalog-form" novalidate>
+{{ form.hidden_tag() }}
+<div class="form-grid">
+<div class="field">{{ form.movement_type.label }}{{ form.movement_type() }}{% for error in form.movement_type.errors %}<small class="field-error">{{ error }}</small>{% endfor %}</div>
+<div class="field">{{ form.quantity.label }}{{ form.quantity() }}{% for error in form.quantity.errors %}<small class="field-error">{{ error }}</small>{% endfor %}</div>
+<div class="field field-wide">{{ form.note.label }}{{ form.note() }}{% for error in form.note.errors %}<small class="field-error">{{ error }}</small>{% endfor %}</div>
+</div>
+<div class="form-actions">{{ form.submit(class_='btn btn-primary') }}<a class="btn btn-outline" href="{{ url_for('equipment_admin.item_detail', item_id=item.id) }}">Annuler</a></div>
+</form>
+{% endblock %}
