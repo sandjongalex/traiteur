@@ -32,11 +32,17 @@ def create_app(config_name: str | None = None) -> Flask:
     migrate.init_app(app, db)
     csrf.init_app(app)
 
+    # Ensure model metadata is registered before migrations/queries.
+    from . import models  # noqa: F401
+    from .routes.admin import catalog_admin_bp
     from .routes.public import public_bp
 
     app.register_blueprint(public_bp)
+    app.register_blueprint(catalog_admin_bp)
+
     _register_cli(app)
     _register_template_context(app)
+    _register_template_filters(app)
     _register_error_handlers(app)
 
     return app
@@ -83,6 +89,12 @@ def _register_template_context(app: Flask) -> None:
             "structured_data": structured_data,
             "current_year": datetime.now().year,
         }
+
+
+def _register_template_filters(app: Flask) -> None:
+    from .utils.catalog import format_money
+
+    app.add_template_filter(format_money, "money")
 
 
 def _register_error_handlers(app: Flask) -> None:
