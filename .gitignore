@@ -1,0 +1,46 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# Flask
+instance/
+
+# Databases / local data
+*.sqlite
+*.sqlite3
+*.db
+
+# Migrations caches
+migrations/__pycache__/
+
+# Tests / coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Uploads generated at runtime
+app/static/uploads/*
+!app/static/uploads/.gitkeep
