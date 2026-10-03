@@ -1,8 +1,10 @@
 import os
+import re
+from datetime import datetime
 from pathlib import Path
 
 import click
-from flask import Flask
+from flask import Flask, current_app, render_template
 from sqlalchemy import text
 
 from config import CONFIG_BY_NAME
@@ -31,10 +33,82 @@ def create_app(config_name: str | None = None) -> Flask:
     csrf.init_app(app)
 
     from .routes.public import public_bp
-    app.register_blueprint(public_bp)
 
+    app.register_blueprint(public_bp)
     _register_cli(app)
+    _register_template_context(app)
+    _register_error_handlers(app)
+
     return app
+
+
+def _register_template_context(app: Flask) -> None:
+    @app.context_processor
+    def inject_site_context():
+        whatsapp = current_app.config.get("WATO_WHATSAPP")
+        whatsapp_digits = re.sub(r"\D", "", whatsapp or "")
+        site = {
+            "company_name": current_app.config["WATO_COMPANY_NAME"],
+            "tagline": current_app.config["WATO_TAGLINE"],
+            "city": current_app.config["WATO_CITY"],
+            "country": current_app.config["WATO_COUNTRY"],
+            "phone": current_app.config.get("WATO_PHONE"),
+            "email": current_app.config.get("WATO_EMAIL"),
+            "address": current_app.config.get("WATO_ADDRESS"),
+            "whatsapp_url": (
+                f"https://wa.me/{whatsapp_digits}" if whatsapp_digits else None
+            ),
+            "facebook_url": current_app.config.get("WATO_FACEBOOK_URL"),
+            "instagram_url": current_app.config.get("WATO_INSTAGRAM_URL"),
+            "tiktok_url": current_app.config.get("WATO_TIKTOK_URL"),
+            "og_image": current_app.config.get("WATO_OG_IMAGE"),
+        }
+        structured_data = {
+            "@context": "https://schema.org",
+            "@type": "FoodEstablishment",
+            "name": site["company_name"],
+            "description": "Traiteur & Événementiel professionnel à Yaoundé, Cameroun.",
+            "address": {
+                "@type": "PostalAddress",
+                "addressLocality": site["city"],
+                "addressCountry": "CM",
+            },
+        }
+        if site["phone"]:
+            structured_data["telephone"] = site["phone"]
+        if site["email"]:
+            structured_data["email"] = site["email"]
+        return {
+            "site": site,
+            "structured_data": structured_data,
+            "current_year": datetime.now().year,
+        }
+
+
+def _register_error_handlers(app: Flask) -> None:
+    @app.errorhandler(403)
+    def forbidden(error):
+        return render_template(
+            "errors/403.html",
+            page_title="Accès refusé",
+            meta_description="Accès refusé.",
+        ), 403
+
+    @app.errorhandler(404)
+    def not_found(error):
+        return render_template(
+            "errors/404.html",
+            page_title="Page introuvable",
+            meta_description="La page demandée est introuvable.",
+        ), 404
+
+    @app.errorhandler(500)
+    def internal_error(error):
+        return render_template(
+            "errors/500.html",
+            page_title="Erreur interne",
+            meta_description="Une erreur interne est survenue.",
+        ), 500
 
 
 def _register_cli(app: Flask) -> None:
