@@ -1,239 +1,270 @@
-# Architecture — WATO EVENTS
+# Architecture globale — WATO EVENTS
 
-## 1. Principes
+## 1. Décision d'ensemble
 
-WATO EVENTS sera construit comme une application Flask modulaire, orientée MVP mais préparée pour l'évolution.
+WATO EVENTS adopte un **monolithe Flask modulaire** : une seule application et une seule base MySQL pour le MVP, avec séparation stricte des domaines dans le code. Aucun microservice, Redis, Celery, Docker ou Kubernetes n'est requis pour fonctionner sur PythonAnywhere.
 
-Principes :
+Le socle existant `create_app()`, `extensions.py`, Flask-SQLAlchemy, Flask-Migrate et CSRF est conservé.
 
-- application factory `create_app()` ;
-- Blueprints par domaine ou surface ;
-- logique métier dans des services ;
-- modèles SQLAlchemy séparés des routes ;
-- templates Jinja2 sans logique métier complexe ;
-- migrations Alembic/Flask-Migrate ;
-- configuration par environnement ;
-- compatibilité PythonAnywhere ;
-- dépendances limitées au nécessaire.
+## 2. Architecture fonctionnelle
 
-## 2. Structure cible initiale
+| Domaine | Responsabilité | Entités principales | Dépendances / interactions |
+|---|---|---|---|
+| Public / Marketing | acquisition, SEO, catalogue public, galerie | Service, Menu, Pack, Dish, GalleryItem, BusinessSettings | Catalog, Quotes, Settings |
+| Authentification | connexion, session, récupération accès | User | RBAC |
+| Utilisateurs / RBAC | comptes internes et autorisations | User, Role, Permission | tous modules privés |
+| CRM Prospects | demandes non converties, suivi commercial | Prospect, QuoteRequest | Quotes, Customers |
+| Clients | référentiel clients | Customer | Quotes, Orders, Events, Billing |
+| Catalogue | offres vendables | Service, Dish, Menu, MenuItem, Pack | Public, Quotes, Pricing |
+| Demandes de devis | besoin brut du visiteur/prospect | QuoteRequest | CRM, Catalog |
+| Devis | proposition commerciale versionnée | Quote, QuoteItem | CRM, Catalog, Pricing, Orders/Events |
+| Commandes | engagement commercial exécutable | Order, OrderItem | Customers, Quotes, Billing |
+| Événements | exécution logistique événementielle | Event, EventType | Orders, Staff, Equipment, Inventory |
+| Paiements | encaissements | Payment | Orders/Events, Invoices |
+| Factures | documents financiers | Invoice, InvoiceItem | Customers, Orders/Events, Payments |
+| Stocks | ledger matières | Ingredient, StockMovement | Purchases, Events |
+| Fournisseurs / Achats | approvisionnement | Supplier, Purchase, PurchaseItem | Inventory |
+| Matériel | parc et réservations | Equipment, EquipmentReservation | Events |
+| Personnel | ressources humaines opérationnelles | Employee, EventAssignment | Events |
+| Planning | disponibilité et conflits | Event, Employee, EquipmentReservation | Events, Staff, Equipment |
+| Galerie | réalisations publiques | GalleryItem | Public |
+| Notifications | notifications internes/externes abstraites | Notification | plusieurs domaines |
+| Rapports | agrégats lecture seule | projections/requêtes | tous domaines métier |
+| Paramètres | identité et règles configurables | BusinessSettings | Public, Documents, Notifications |
+| Audit | traçabilité actions sensibles | AuditLog | tous domaines privés |
+
+## 3. Arborescence cible
+
+La structure ci-dessous est **cible** et doit être créée progressivement, uniquement au sprint qui en a besoin.
 
 ```text
 app/
-    __init__.py
-    extensions.py
+  __init__.py
+  extensions.py
 
-    models/
+  models/
+    auth.py
+    crm.py
+    catalog.py
+    quotes.py
+    orders.py
+    events.py
+    billing.py
+    inventory.py
+    equipment.py
+    staff.py
+    settings.py
+    audit.py
 
-    routes/
-        public/
-        auth/
-        admin/
+  blueprints/
+    public/
+    auth/
+    admin/
+    crm/
+    catalog/
+    quotes/
+    orders/
+    events/
+    billing/
+    inventory/
+    equipment/
+    staff/
+    reports/
+    settings/
 
-    services/
+  services/
+    pricing.py
+    quote.py
+    order.py
+    event.py
+    payment.py
+    invoice.py
+    inventory.py
+    equipment.py
+    notification.py
+    document.py
+    reporting.py
+    numbering.py
+    audit.py
 
-    templates/
-        public/
-        auth/
-        admin/
+  forms/
+  templates/
+    public/
+    auth/
+    admin/
 
-    static/
-        css/
-        js/
-        images/
-        uploads/
+  static/
+    css/
+    js/
+    images/
+    uploads/
 
-    utils/
+  utils/
+    money.py
+    time.py
+    files.py
+    permissions.py
+    enums.py
 
-config.py
-run.py
-requirements.txt
-migrations/
 tests/
+  unit/
+  services/
+  routes/
+  permissions/
+  integration/
+
+migrations/
 docs/
 ```
 
-Cette structure pourra être adaptée lorsque les besoins réels du dépôt l'exigeront, sans créer prématurément les modules métier.
+## 4. Dépendances entre modules
 
-## 3. Couches applicatives
+```mermaid
+flowchart LR
+  PUBLIC --> CATALOG
+  PUBLIC --> QUOTE_REQUESTS[Quote Requests]
+  QUOTE_REQUESTS --> CRM
+  QUOTES --> CRM
+  QUOTES --> CATALOG
+  QUOTES --> PRICING
+  ORDERS --> CRM
+  ORDERS --> QUOTES
+  EVENTS --> ORDERS
+  EVENTS --> STAFF
+  EVENTS --> EQUIPMENT
+  EVENTS --> INVENTORY
+  BILLING --> ORDERS
+  BILLING --> EVENTS
+  PURCHASES --> INVENTORY
+  REPORTING --> CRM
+  REPORTING --> QUOTES
+  REPORTING --> EVENTS
+  REPORTING --> BILLING
+  REPORTING --> INVENTORY
+```
 
-### Routes / contrôleurs
+Règle : les modules de reporting lisent plusieurs domaines mais les domaines métier ne dépendent jamais du reporting.
 
-Responsables de :
+## 5. Commande vs événement
 
-- réception HTTP ;
-- authentification/autorisation ;
-- validation des entrées ;
-- appel des services ;
-- choix de la réponse ou du template.
+**Décision : deux entités différentes.**
 
-### Services
+- `Order` représente l'engagement commercial à livrer des biens/services.
+- `Event` représente une exécution nécessitant planification opérationnelle, lieu, horaires, matériel ou personnel.
+- Une commande de livraison simple peut ne pas avoir d'événement.
+- Un mariage peut être associé à une commande et à un événement.
+- Une relation `Order 0..1 -> Event` suffit pour le MVP. Si plus tard une commande doit couvrir plusieurs événements, une migration pourra généraliser la relation.
 
-Responsables de :
+Cette séparation évite de forcer toute vente dans un modèle logistique complexe.
 
-- règles métier ;
-- calculs ;
-- transitions de statut ;
-- orchestration entre modèles ;
-- opérations réutilisables.
+## 6. User vs Employee
 
-### Modèles
+- `User` = identité numérique pouvant se connecter au back-office.
+- `Employee` = personne mobilisable sur les prestations.
+- Un employé peut exister sans compte utilisateur.
+- Un utilisateur administratif peut ne jamais être affecté à un événement.
+- Lien optionnel `Employee.user_id -> User.id`.
 
-Responsables de :
+## 7. Services métier
 
-- persistance ;
-- relations ;
-- contraintes structurelles ;
-- propriétés simples proches de la donnée.
+Les routes Flask restent minces. Les services portent les règles métier et les transactions :
 
-## 4. Base de données
+- `PricingService` : calcul des prix ;
+- `QuoteService` : création, modification, envoi, acceptation ;
+- `OrderService` : création depuis devis ou commande directe ;
+- `EventService` : planification et changements d'état ;
+- `PaymentService` : enregistrement et affectation d'encaissements ;
+- `InvoiceService` : émission et statut des factures ;
+- `InventoryService` : mouvements et disponibilité stock ;
+- `EquipmentService` : réservations et conflits ;
+- `NotificationService` : abstraction email/WhatsApp/SMS ;
+- `DocumentService` : devis/factures/reçus/listes PDF ;
+- `ReportingService` : agrégats en lecture ;
+- `NumberingService` : numéros commerciaux atomiques ;
+- `AuditService` : journalisation sensible.
 
-Production : **MySQL**.
+## 8. Frontières transactionnelles
 
-ORM : **SQLAlchemy**.
+Une transaction DB unique doit couvrir les opérations atomiques suivantes :
 
-Évolution du schéma : **Flask-Migrate / Alembic**.
+- acceptation d'un devis + création de commande ;
+- création/confirmation d'un événement et réservations critiques ;
+- enregistrement paiement + mise à jour état financier dérivé ;
+- validation d'achat + mouvements de stock ;
+- correction/inventaire + mouvements associés ;
+- réservation matériel avec contrôle de disponibilité ;
+- émission de facture + attribution numéro commercial.
 
-Règles :
+Aucun commit ne doit être effectué au milieu d'une opération métier atomique.
 
-- clés étrangères explicites ;
-- index sur recherches fréquentes et colonnes de relation ;
-- contraintes d'unicité lorsqu'elles expriment une vraie règle ;
-- timestamps cohérents ;
-- éviter les suppressions en cascade non maîtrisées ;
-- préférer l'archivage ou les statuts lorsque la traçabilité l'exige.
+## 9. Suppressions
 
-Champs communs à prévoir lorsque pertinents :
+Hard delete réservé aux données non utilisées et sans valeur historique.
 
-- `created_at` ;
-- `updated_at` ;
-- `created_by`.
+Archivage/soft delete ou statut obligatoire pour : clients utilisés, devis envoyés, commandes, événements, paiements, factures, mouvements de stock, réservations terminées et audits.
 
-## 5. Architecture métier conceptuelle
+Les objets financiers et de traçabilité ne doivent pas être supprimables par l'interface standard.
 
-Entités futures principales :
+## 10. Statuts
 
-- User / Role / Permission ;
-- Prospect ;
-- Client ;
-- EventType ;
-- Event ;
-- Service ;
-- Menu ;
-- Pack ;
-- QuoteRequest ;
-- Quote ;
-- QuoteLine ;
-- Order ;
-- Payment ;
-- Invoice ;
-- StockItem ;
-- StockMovement ;
-- Supplier ;
-- Purchase ;
-- Equipment ;
-- EquipmentReservation ;
-- StaffMember ;
-- EventAssignment ;
-- GalleryItem ;
-- AppSetting.
+Les statuts sont centralisés dans des enums/constants et validés par les services.
 
-Cette liste est conceptuelle pour le cadrage. Elle ne constitue pas une instruction d'implémentation immédiate.
+- Quote : BROUILLON → ENVOYE → ACCEPTE / REFUSE / EXPIRE / ANNULE
+- Order : BROUILLON → CONFIRMEE → PREPARATION → PRETE → LIVREE/TERMINEE ; annulation contrôlée
+- Event : PLANIFIE → CONFIRME → PREPARATION → EN_COURS → TERMINE ; ANNULE selon règles
+- Invoice : BROUILLON → EMISE → PARTIELLEMENT_PAYEE → PAYEE ; ANNULEE/AVOIR selon futur besoin
+- Payment : EN_ATTENTE → VALIDE ; ECHEC / ANNULE / REMBOURSE
+- EquipmentReservation : PROVISOIRE → CONFIRMEE → EN_UTILISATION → RETOURNEE ; ANNULEE
 
-## 6. RBAC
+## 11. Numérotation
 
-Rôles minimums :
+Les identifiants DB restent techniques. Les références commerciales suivent un compteur annuel transactionnel :
 
-- `SUPER_ADMIN`
-- `ADMIN`
-- `COMMERCIAL`
-- `CUISINE`
-- `LOGISTIQUE`
-- `COMPTABILITE`
-- `PERSONNEL`
+- DEV-2026-0001
+- CMD-2026-0001
+- EVT-2026-0001
+- FAC-2026-0001
 
-Principes :
+Le `NumberingService` verrouille ou met à jour atomiquement la séquence par type + année afin d'éviter les collisions concurrentes.
 
-- aucun utilisateur standard ne reçoit automatiquement les droits administrateur ;
-- les contrôles d'accès sont effectués côté serveur ;
-- les permissions doivent être extensibles ;
-- masquer un bouton n'est jamais une mesure de sécurité suffisante ;
-- les futurs tests doivent couvrir les permissions critiques.
+## 12. Prix
 
-## 7. Argent
+Tous les montants utilisent `Decimal` en Python et `NUMERIC/DECIMAL` en MySQL.
 
-Devise principale : **XAF / FCFA**.
+Un `QuoteItem`/ `OrderItem` doit capturer un **snapshot commercial** : libellé, quantité, unité, prix unitaire, remise, taxe, total. Il ne faut pas recalculer un ancien devis depuis le prix actuel d'un plat.
 
-- Jamais de `float` pour l'argent.
-- Utiliser `Decimal` côté Python.
-- Utiliser `NUMERIC`/`DECIMAL` approprié en base.
-- Centraliser arrondis et calculs.
-- Recalculer les totaux à partir des lignes et règles métier fiables.
+Le `PricingService` orchestre : prix plat/menu/pack, prix par personne, quantité, personnel, matériel, transport, options, remises et taxes.
 
-## 8. Dates et heures
+## 13. Stock
 
-L'activité initiale est au Cameroun.
+Le stock est un ledger. La source de vérité est `StockMovement` avec types : PURCHASE, CONSUMPTION, ADJUSTMENT, LOSS, RETURN, INVENTORY_CORRECTION.
 
-- Centraliser les conversions temporelles.
-- Éviter les conversions improvisées dans les routes/templates.
-- Définir une convention claire entre stockage et affichage lors du PROMPT 1.
+Le disponible peut être calculé par somme des mouvements ; pour la performance, un solde cache pourra être ajouté plus tard mais devra être réconciliable avec le ledger.
 
-## 9. Sécurité
+## 14. Matériel
 
-Prévoir :
+`Equipment` conserve le parc physique. `EquipmentReservation` réserve une quantité pour un événement sur une fenêtre temporelle.
 
-- hash de mot de passe robuste ;
-- Flask-Login ou équivalent ;
-- protection CSRF ;
-- validation serveur ;
-- contrôles RBAC serveur ;
-- secrets par variables d'environnement ;
-- validation des fichiers uploadés ;
-- noms de fichiers sécurisés ;
-- limitation des extensions et tailles ;
-- aucun secret réel dans Git.
+Disponibilité conceptuelle :
 
-## 10. Uploads
+`disponible = total - réservé_actif - en_utilisation - endommagé - maintenance`
 
-Les uploads concerneront notamment plats, menus, galerie et événements.
+Les états ne doivent pas être dupliqués sans source claire : les réservations portent le réservé/en utilisation ; les compteurs endommagé/maintenance peuvent être portés par l'équipement ou par mouvements d'état selon le niveau de détail futur.
 
-À terme :
+## 15. Fichiers
 
-- extensions autorisées explicites ;
-- contrôle de taille ;
-- renommage sécurisé ;
-- organisation par catégorie ou contexte ;
-- chemin de stockage configurable ;
-- jamais de confiance dans le nom fourni par l'utilisateur.
+Pour le MVP PythonAnywhere : stockage local organisé par catégories `dishes/`, `gallery/`, `logos/`, `events/`, `documents/`.
 
-## 11. Configuration applicative
+Le code doit passer par une abstraction de stockage afin de permettre un remplacement futur par un backend cloud sans modifier la logique métier.
 
-Les éléments suivants doivent être centralisés :
+## 16. Notifications
 
-- nom commercial ;
-- logo ;
-- téléphone ;
-- WhatsApp ;
-- email ;
-- adresse ;
-- réseaux sociaux ;
-- devise ;
-- conditions commerciales.
+`NotificationService` expose une interface commune avec canaux EMAIL, WHATSAPP, SMS et INTERNAL. Les fournisseurs externes ne sont pas intégrés pendant ce sprint.
 
-Le numéro WhatsApp ne doit pas être hardcodé dans plusieurs templates.
+## 17. Site public et SEO
 
-## 12. Déploiement
+Le public lit le catalogue publié et la galerie sans accéder aux modèles internes sensibles. Les pages publiques utiliseront URLs propres, metadata SEO, Open Graph et futur sitemap. Les actions d'administration sont séparées dans des Blueprints privés.
 
-Cible initiale : **PythonAnywhere**.
+## 18. PythonAnywhere
 
-La future documentation `docs/PYTHONANYWHERE.md` couvrira :
-
-- virtualenv ;
-- requirements ;
-- MySQL ;
-- variables d'environnement ;
-- migrations ;
-- WSGI ;
-- fichiers statiques ;
-- uploads ;
-- procédure de mise à jour.
+Architecture compatible avec Flask WSGI, MySQL, virtualenv, statiques et uploads locaux. Aucun composant distribué obligatoire.
