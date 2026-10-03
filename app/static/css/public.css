@@ -546,6 +546,104 @@
 .compact-card{min-height:230px}
 .catalog-empty-public{max-width:760px;padding:2rem;border:1px dashed #c8bfae;border-radius:var(--radius-lg);background:#fff;box-shadow:var(--shadow-xs)}
 
+
+.home-universes-section{
+  background:#fffdf9;
+}
+.home-universes-header{
+  display:flex;
+  align-items:end;
+  justify-content:space-between;
+  gap:2rem;
+  margin-bottom:1.8rem;
+}
+.home-universes-heading{
+  max-width:760px;
+  margin-bottom:0;
+}
+.home-universes-heading h2{
+  max-width:700px;
+}
+.home-universes-heading p:last-child{
+  max-width:650px;
+}
+.home-universes-mosaic{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  grid-template-rows:repeat(2,220px);
+  gap:.9rem;
+}
+.universe-card{
+  position:relative;
+  overflow:hidden;
+  min-width:0;
+  margin:0;
+  border:1px solid rgba(23,63,53,.08);
+  border-radius:24px;
+  background:#eee6d8;
+  box-shadow:0 10px 28px rgba(14,43,36,.055);
+}
+.universe-card-main{
+  grid-column:span 2;
+  grid-row:span 2;
+}
+.universe-card::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(180deg,rgba(13,42,35,0) 45%,rgba(13,42,35,.62) 100%);
+  pointer-events:none;
+}
+.universe-card img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  transition:transform .42s ease;
+}
+.universe-card:hover img{
+  transform:scale(1.035);
+}
+.universe-card figcaption{
+  position:absolute;
+  z-index:1;
+  left:1rem;
+  right:1rem;
+  bottom:.9rem;
+  color:#fff;
+}
+.universe-card figcaption span,
+.universe-card figcaption strong{
+  display:block;
+}
+.universe-kicker{
+  margin-bottom:.18rem;
+  color:#ead8ae;
+  font-size:.62rem;
+  font-weight:900;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+}
+.universe-card figcaption strong{
+  max-width:95%;
+  color:#fff;
+  font-family:var(--font-display);
+  font-size:clamp(1.05rem,1.8vw,1.45rem);
+  line-height:1.15;
+}
+.universe-card-main figcaption{
+  left:1.35rem;
+  bottom:1.2rem;
+}
+.universe-card-main figcaption strong{
+  font-size:clamp(1.5rem,2.7vw,2.35rem);
+}
+.universe-disclaimer{
+  margin:.8rem 0 0;
+  color:#7a817d;
+  font-size:.72rem;
+  line-height:1.45;
+}
+
 .split-feature,.split-copy{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(2rem,6vw,4.5rem);align-items:center}
 .feature-visual{position:relative}
 .feature-visual::after{content:"";position:absolute;inset:18px -14px -14px 18px;z-index:-1;border-radius:var(--radius-xl);background:rgba(199,154,74,.12)}
@@ -785,6 +883,9 @@ linear-gradient(180deg,#f6f0e4,#fffdf9)}
   .home-services-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 @media(max-width:980px){
+  .home-universes-header{align-items:flex-start;flex-direction:column}
+  .home-universes-mosaic{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:320px 210px 210px}
+  .universe-card-main{grid-column:1/-1;grid-row:auto}
   .featured-catalog-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
   .why-layout{grid-template-columns:1fr}
   .why-intro{position:static;max-width:680px}
@@ -800,6 +901,13 @@ linear-gradient(180deg,#f6f0e4,#fffdf9)}
   .feature-visual{order:2}
 }
 @media(max-width:620px){
+  .home-universes-header{gap:1rem;margin-bottom:1.2rem}
+  .home-universes-header .btn{width:100%}
+  .home-universes-mosaic{grid-template-columns:1fr;grid-template-rows:none}
+  .universe-card,.universe-card-main{grid-column:auto;grid-row:auto;aspect-ratio:4/3}
+  .universe-card-main{aspect-ratio:5/4}
+  .universe-card figcaption{left:.85rem;right:.85rem;bottom:.75rem}
+  .universe-card-main figcaption{left:1rem;bottom:.9rem}
   .featured-catalog-title{align-items:flex-start;flex-direction:column}
   .featured-catalog-grid{grid-template-columns:1fr}
   .featured-catalog-block + .featured-catalog-block{margin-top:2.2rem;padding-top:2rem}
@@ -885,4 +993,9 @@ linear-gradient(180deg,#f6f0e4,#fffdf9)}
   }
   .featured-catalog-card:hover{transform:none}
   .featured-catalog-card:hover .featured-catalog-media img{transform:none}
+}
+
+@media(prefers-reduced-motion:reduce){
+  .universe-card img{transition:none}
+  .universe-card:hover img{transform:none}
 }
