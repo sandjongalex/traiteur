@@ -1,78 +1,65 @@
 # Sécurité — WATO EVENTS
 
-## 1. Authentification
+## 1. Authentification / autorisation
 
-Prévoir Flask-Login ou équivalent, mots de passe hashés avec une primitive moderne, cookies de session sécurisés en production et protection contre les comptes désactivés.
+Le vrai système User/Role/Permission n'est pas encore implémenté. Catalogue et demandes utilisent temporairement une seule protection `WATO_CATALOG_ADMIN_KEY` et la même session. Ce mécanisme doit être supprimé au PROMPT 5.
 
-## 2. Autorisation
+## 2. CSRF
 
-RBAC côté serveur sur chaque opération privée. Une route ne doit jamais se fier uniquement au masquage d'un bouton.
+Flask-WTF/CSRFProtect protège les formulaires mutatifs publics et administratifs.
 
-## 3. CSRF
+## 3. QuoteRequest : données personnelles
 
-Flask-WTF/CSRFProtect est déjà initialisé. Tous les formulaires mutatifs doivent être protégés.
+QuoteRequest peut contenir nom, téléphone, WhatsApp, email, lieu et notes.
 
-## 4. Entrées
+Règles :
 
-- validation serveur systématique ;
-- longueurs maximales ;
-- formats email/téléphone/dates ;
-- contraintes métier dans les services ;
-- requêtes via SQLAlchemy, jamais concaténées manuellement.
+- ne pas logger le formulaire complet ;
+- ne pas mettre les coordonnées dans l'URL ;
+- ne pas exposer une demande complète publiquement ;
+- la confirmation utilise référence + token aléatoire ;
+- la page de confirmation n'affiche aucune coordonnée personnelle.
 
-## 5. Secrets
+## 4. Prix
+
+Le navigateur n'est jamais source de vérité.
+
+Le client transmet uniquement IDs et quantités. Le serveur recharge Service/Menu/Pack/Dish actifs et publics puis PricingService recalcule avant enregistrement.
+
+## 5. Anti-abus MVP
+
+Le configurateur utilise :
+
+- CSRF ;
+- honeypot ;
+- limites de longueur ;
+- bornes sur guest_count et quantités ;
+- validation date ;
+- submission_token unique pour réduire les doubles soumissions.
+
+Aucun Redis ni service externe n'est ajouté pour du rate limiting à ce stade.
+
+## 6. Confirmation
+
+Une référence DEM séquentielle n'est pas suffisante pour consulter une confirmation. Un `public_token` aléatoire est exigé en plus.
+
+## 7. Uploads catalogue
+
+Extensions et MIME contrôlés, noms sécurisés puis remplacés par UUID.
+
+## 8. Secrets et production
 
 - aucun secret commité ;
 - `.env` ignoré ;
-- `.env.example` uniquement factice ;
-- `SECRET_KEY`, URL MySQL et futurs tokens via environnement.
-
-## 6. Uploads
-
-- extensions et MIME autorisés ;
-- taille maximale ;
-- nom généré côté serveur ;
-- jamais exécuter un fichier uploadé ;
-- séparer documents publics et privés ;
-- vérifier l'autorisation avant téléchargement d'un document privé.
-
-## 7. Audit
-
-Journaliser au minimum :
-
-- modification/acceptation/annulation de devis ;
-- paiements et remboursements ;
-- émission/modification/annulation facture ;
-- ajustements et corrections stock ;
-- annulations événement/commande ;
-- réservation/libération matériel sensible ;
-- changement de rôle ;
-- modification paramètres critiques.
-
-AuditLog doit contenir : acteur, action, type/id ressource, timestamp, avant/après ou delta pertinent, adresse IP/metadata raisonnable.
-
-## 8. Suppressions
-
-Données financières, historiques et audit non supprimables par les opérations courantes. Utiliser archivage ou opérations compensatoires.
-
-## 9. Production
-
-- DEBUG=False ;
+- DEBUG=False en production ;
 - SECRET_KEY obligatoire ;
-- base MySQL avec utilisateur applicatif limité ;
-- HTTPS fourni par l'hébergement ;
-- sauvegardes DB et uploads ;
-- logs sans secrets ni données sensibles inutiles.
+- WATO_CATALOG_ADMIN_KEY fournie par environnement tant que le mécanisme temporaire existe.
 
-## 10. Menaces principales
+## 9. Risques à surveiller
 
-- élévation de privilèges ;
-- IDOR / accès à l'objet d'un autre périmètre ;
-- falsification de montants côté client ;
-- doubles validations/paiements ;
-- collision de numérotation ;
-- upload malveillant ;
-- pertes de données par suppression ;
-- concurrence sur stock/réservations.
-
-Les tests de sécurité fonctionnelle doivent cibler ces scénarios.
+- concurrence de numérotation DEM ;
+- données personnelles ;
+- falsification de sélection/prix ;
+- double soumission ;
+- futur passage QuoteRequest → Prospect/Quote ;
+- remplacement impératif de la clé temporaire au PROMPT 5.
