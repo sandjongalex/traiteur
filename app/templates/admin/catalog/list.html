@@ -1,7 +1,7 @@
 {% extends "admin/catalog_base.html" %}
 {% block admin_content %}
 <section class="admin-page-heading admin-page-heading-row">
-  <div><p class="eyebrow">Catalogue</p><h1>{{ title }}</h1></div>
+  <div><p class="eyebrow">Catalogue</p><h1>{{ title }}</h1><p>Gérez le contenu, la publication et l’ordre d’affichage.</p></div>
   {% if kind == "categories" %}<a class="btn btn-primary" href="{{ url_for('catalog_admin.category_create') }}">Créer une catégorie</a>
   {% elif kind == "services" %}<a class="btn btn-primary" href="{{ url_for('catalog_admin.service_create') }}">Créer un service</a>
   {% elif kind == "dishes" %}<a class="btn btn-primary" href="{{ url_for('catalog_admin.dish_create') }}">Créer un plat</a>
@@ -37,7 +37,7 @@
       {% endif %}
       <form method="post" action="{{ url_for('catalog_admin.toggle', kind=kind, item_id=item.id, field='is_active') }}">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-        <button type="submit">{{ "Désactiver" if item.is_active else "Activer" }}</button>
+        <button type="submit" {% if item.is_active %}data-confirm="Désactiver cet élément ?"{% endif %}>{{ "Désactiver" if item.is_active else "Activer" }}</button>
       </form>
       {% if kind != "categories" %}
       <form method="post" action="{{ url_for('catalog_admin.toggle', kind=kind, item_id=item.id, field='is_public') }}">
