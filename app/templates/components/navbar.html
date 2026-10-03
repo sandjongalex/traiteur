@@ -1,21 +1,26 @@
+{% set endpoint = request.endpoint or '' %}
 <header class="site-header" data-header>
   <div class="container nav-wrap">
     <a class="brand" href="{{ url_for('public.index') }}" aria-label="WATO EVENTS — Accueil">
       <span class="brand-mark" aria-hidden="true">WE</span>
       <span class="brand-text"><strong>WATO</strong><small>EVENTS</small></span>
     </a>
+
     <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav" aria-label="Ouvrir la navigation" data-nav-toggle>
-      <span class="sr-only">Ouvrir le menu</span><span></span><span></span><span></span>
+      <span class="sr-only">Ouvrir le menu</span>
+      <span></span><span></span><span></span>
     </button>
+
     <nav id="main-nav" class="main-nav" aria-label="Navigation principale" data-nav>
-      <a href="{{ url_for('public.index') }}">Accueil</a>
-      <a href="{{ url_for('public.about') }}">À propos</a>
-      <a href="{{ url_for('public.services') }}">Services</a>
-      <a href="{{ url_for('public.menus') }}">Menus</a>
-      <a href="{{ url_for('public.packs') }}">Packs</a>
-      <a href="{{ url_for('public.gallery') }}">Réalisations</a>
-      <a href="{{ url_for('public.contact') }}">Contact</a>
-      <a class="btn btn-primary nav-cta" href="{{ url_for('public.quote_request') }}">Demander un devis</a>
+      <a class="nav-link {{ 'is-active' if endpoint == 'public.index' else '' }}" href="{{ url_for('public.index') }}" {% if endpoint == 'public.index' %}aria-current="page"{% endif %}>Accueil</a>
+      <a class="nav-link {{ 'is-active' if endpoint == 'public.about' else '' }}" href="{{ url_for('public.about') }}" {% if endpoint == 'public.about' %}aria-current="page"{% endif %}>À propos</a>
+      <a class="nav-link {{ 'is-active' if endpoint in ['public.services', 'public.service_detail'] else '' }}" href="{{ url_for('public.services') }}" {% if endpoint in ['public.services', 'public.service_detail'] %}aria-current="page"{% endif %}>Services</a>
+      <a class="nav-link {{ 'is-active' if endpoint in ['public.menus', 'public.menu_detail'] else '' }}" href="{{ url_for('public.menus') }}" {% if endpoint in ['public.menus', 'public.menu_detail'] %}aria-current="page"{% endif %}>Menus</a>
+      <a class="nav-link {{ 'is-active' if endpoint in ['public.packs', 'public.pack_detail'] else '' }}" href="{{ url_for('public.packs') }}" {% if endpoint in ['public.packs', 'public.pack_detail'] %}aria-current="page"{% endif %}>Packs</a>
+      <a class="nav-link {{ 'is-active' if endpoint == 'public.gallery' else '' }}" href="{{ url_for('public.gallery') }}" {% if endpoint == 'public.gallery' %}aria-current="page"{% endif %}>Réalisations</a>
+      <a class="nav-link {{ 'is-active' if endpoint == 'public.contact' else '' }}" href="{{ url_for('public.contact') }}" {% if endpoint == 'public.contact' %}aria-current="page"{% endif %}>Contact</a>
+      <a class="btn btn-primary nav-cta {{ 'is-active' if endpoint == 'public.quote_request' else '' }}" href="{{ url_for('public.quote_request') }}" {% if endpoint == 'public.quote_request' %}aria-current="page"{% endif %}>Demander un devis</a>
     </nav>
   </div>
+  <button class="nav-backdrop" type="button" aria-label="Fermer la navigation" data-nav-backdrop hidden></button>
 </header>
