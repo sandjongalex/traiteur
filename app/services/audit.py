@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 
-from flask import request
+from flask import has_request_context, request
 from flask_login import current_user
 
 from ..extensions import db
@@ -20,11 +20,13 @@ class AuditService:
         user=None,
     ) -> AuditLog:
         actor = user
-        if actor is None and getattr(current_user, "is_authenticated", False):
+        if actor is None and has_request_context() and getattr(current_user, "is_authenticated", False):
             actor = current_user
 
-        forwarded = request.headers.get("X-Forwarded-For", "")
-        ip_address = forwarded.split(",")[0].strip() if forwarded else request.remote_addr
+        ip_address = None
+        if has_request_context():
+            forwarded = request.headers.get("X-Forwarded-For", "")
+            ip_address = forwarded.split(",")[0].strip() if forwarded else request.remote_addr
 
         entry = AuditLog(
             user_id=getattr(actor, "id", None),
