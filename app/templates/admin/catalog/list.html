@@ -1,0 +1,60 @@
+{% extends "admin/catalog_base.html" %}
+{% block admin_content %}
+<section class="admin-page-heading admin-page-heading-row">
+  <div><p class="eyebrow">Catalogue</p><h1>{{ title }}</h1></div>
+  {% if kind == "categories" %}<a class="btn btn-primary" href="{{ url_for('catalog_admin.category_create') }}">Créer une catégorie</a>
+  {% elif kind == "services" %}<a class="btn btn-primary" href="{{ url_for('catalog_admin.service_create') }}">Créer un service</a>
+  {% elif kind == "dishes" %}<a class="btn btn-primary" href="{{ url_for('catalog_admin.dish_create') }}">Créer un plat</a>
+  {% elif kind == "menus" %}<a class="btn btn-primary" href="{{ url_for('catalog_admin.menu_create') }}">Créer un menu</a>
+  {% elif kind == "packs" %}<a class="btn btn-primary" href="{{ url_for('catalog_admin.pack_create') }}">Créer un pack</a>
+  {% endif %}
+</section>
+
+{% if items %}
+<div class="admin-table-wrap">
+<table class="admin-table">
+  <thead><tr><th>Nom</th>{% if kind != "categories" %}<th>Prix</th><th>Public</th><th>À la une</th>{% else %}<th>Type</th>{% endif %}<th>Actif</th><th>Ordre</th><th>Actions</th></tr></thead>
+  <tbody>
+  {% for item in items %}
+  <tr>
+    <td data-label="Nom"><strong>{{ item.name }}</strong><small>{{ item.slug }}</small></td>
+    {% if kind != "categories" %}
+      {% set value = item.base_price if kind in ["services", "dishes"] else item.price %}
+      <td data-label="Prix">{{ value|money(item.pricing_unit) }}</td>
+      <td data-label="Public"><span class="badge {{ 'badge-live' if item.is_public else 'badge-muted' }}">{{ "Publié" if item.is_public else "Privé" }}</span></td>
+      <td data-label="À la une"><span class="badge {{ 'badge-gold' if item.is_featured else 'badge-muted' }}">{{ "Oui" if item.is_featured else "Non" }}</span></td>
+    {% else %}
+      <td data-label="Type"><span class="badge badge-muted">{{ item.category_type }}</span></td>
+    {% endif %}
+    <td data-label="Actif"><span class="badge {{ 'badge-live' if item.is_active else 'badge-muted' }}">{{ "Actif" if item.is_active else "Inactif" }}</span></td>
+    <td data-label="Ordre">{{ item.display_order }}</td>
+    <td data-label="Actions" class="admin-actions">
+      {% if kind == "categories" %}<a href="{{ url_for('catalog_admin.category_edit', item_id=item.id) }}">Modifier</a>
+      {% elif kind == "services" %}<a href="{{ url_for('catalog_admin.service_edit', item_id=item.id) }}">Modifier</a>
+      {% elif kind == "dishes" %}<a href="{{ url_for('catalog_admin.dish_edit', item_id=item.id) }}">Modifier</a>
+      {% elif kind == "menus" %}<a href="{{ url_for('catalog_admin.menu_edit', item_id=item.id) }}">Modifier</a>
+      {% elif kind == "packs" %}<a href="{{ url_for('catalog_admin.pack_edit', item_id=item.id) }}">Modifier</a>
+      {% endif %}
+      <form method="post" action="{{ url_for('catalog_admin.toggle', kind=kind, item_id=item.id, field='is_active') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button type="submit">{{ "Désactiver" if item.is_active else "Activer" }}</button>
+      </form>
+      {% if kind != "categories" %}
+      <form method="post" action="{{ url_for('catalog_admin.toggle', kind=kind, item_id=item.id, field='is_public') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button type="submit">{{ "Dépublier" if item.is_public else "Publier" }}</button>
+      </form>
+      {% endif %}
+    </td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+{% else %}
+<div class="admin-empty">
+  <h2>Aucun élément pour le moment.</h2>
+  <p>Créez le premier élément de cette section pour commencer à alimenter le catalogue.</p>
+</div>
+{% endif %}
+{% endblock %}
