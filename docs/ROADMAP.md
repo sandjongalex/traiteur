@@ -8,11 +8,15 @@ Le projet est développé par sprints successifs. Chaque sprint suit le cycle :
 
 Objectif : vision, architecture, règles fondamentales, conventions, roadmap, préparation du dépôt.
 
-État : **cadrage documentaire**.
+État : **TERMINÉ**.
 
 ## PROMPT 1 — Fondations Flask + MySQL
 
-Prévoir :
+État : **TERMINÉ**.
+
+Socle livré : application factory, configuration par environnement, SQLAlchemy, Flask-Migrate/Alembic, MySQL/PyMySQL, CSRF, route de santé, commande de vérification DB et tests de base.
+
+Prévu/livré :
 
 - squelette Flask ;
 - application factory ;
