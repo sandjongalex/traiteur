@@ -32,7 +32,6 @@ def create_app(config_name: str | None = None) -> Flask:
     migrate.init_app(app, db)
     csrf.init_app(app)
 
-    # Ensure model metadata is registered before migrations/queries.
     from . import models  # noqa: F401
     from .routes.admin import catalog_admin_bp
     from .routes.public import public_bp
