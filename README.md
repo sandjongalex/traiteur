@@ -1,10 +1,43 @@
 # WATO EVENTS
 
-Plateforme Flask/MySQL mobile-first pour WATO EVENTS — Traiteur & Événementiel à Yaoundé.
+Plateforme Flask/SQLAlchemy mobile-first pour WATO EVENTS — Traiteur & Événementiel à Yaoundé.
 
 ## État
 PROMPT 0 à 5 : **terminés**.  
-Prochaine étape : **PROMPT 6 — CRM PROSPECTS + CLIENTS**.
+PROMPT 5.5 — SQLite + environnement PythonAnywhere gratuit : **terminé côté code/documentation**.
+
+Prochaine étape opérationnelle : **TEST FONCTIONNEL COMPLET DE WATO EVENTS SUR PYTHONANYWHERE**.
+
+## Base de données
+
+Le code métier reste indépendant du moteur :
+
+```text
+WATO EVENTS
+   ↓
+SQLAlchemy
+   ├─ SQLite — environnement actuel / PythonAnywhere gratuit
+   └─ MySQL  — cible future lorsque la concurrence augmente
+```
+
+En développement, sans `DATABASE_URL`, l'application utilise automatiquement :
+
+`instance/wato_events.db`
+
+La base est hors `static/` et les fichiers `*.db`, `*.sqlite`, `*.sqlite3` sont ignorés par Git.
+
+### Développement rapide avec SQLite
+
+```bash
+python -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+export APP_ENV=development
+flask --app run.py db upgrade
+flask --app run.py seed-rbac
+flask --app run.py create-superadmin
+flask --app run.py run
+```
 
 ## Back-office sécurisé
 - login : `/admin/login`
@@ -14,31 +47,26 @@ Prochaine étape : **PROMPT 6 — CRM PROSPECTS + CLIENTS**.
 - utilisateurs : `/admin/users`
 - rôles : `/admin/roles`
 - audit : `/admin/audit`
-- profil : `/admin/profile`
 
-L’ancien accès par `WATO_CATALOG_ADMIN_KEY` a été supprimé. Le seul mécanisme valide est désormais Flask-Login + RBAC.
+## PythonAnywhere gratuit
 
-## Mise en route
-```bash
-pip install -r requirements.txt
-flask --app run.py db upgrade
-flask --app run.py seed-rbac
-flask --app run.py create-superadmin
-flask --app run.py run
+Le déploiement actuel peut utiliser SQLite via une URL absolue, par exemple :
+
+```env
+APP_ENV=production
+DATABASE_URL=sqlite:////home/YOUR_USERNAME/traiteur/instance/wato_events.db
 ```
 
-`create-superadmin` demande les informations et le mot de passe de manière interactive ; aucun mot de passe par défaut n’est fourni.
+Voir [docs/PYTHONANYWHERE_SQLITE.md](docs/PYTHONANYWHERE_SQLITE.md).
 
-## Sécurité
-- mots de passe hashés avec Werkzeug ;
-- longueur minimale : 12 caractères ;
-- cookies HttpOnly/SameSite, Secure en production ;
-- CSRF maintenu ;
-- permissions contrôlées côté serveur ;
-- SUPER_ADMIN via rôle système unique ;
-- protection du dernier SUPER_ADMIN actif ;
-- journal d’audit minimal ;
-- open redirect bloqué.
+## MySQL futur
 
-## Documentation
-Voir `docs/AUTHENTICATION.md`, `docs/RBAC.md`, `docs/SECURITY.md`, `docs/ERD.md`, `docs/DATABASE_DESIGN.md`, `docs/TEST_STRATEGY.md` et `docs/ROADMAP.md`.
+Le passage futur vers MySQL se fera en changeant `DATABASE_URL` **après** création du schéma MySQL avec Alembic et transfert contrôlé des données. Changer uniquement l'URL ne migre pas les données existantes.
+
+## Tests
+
+```bash
+pytest
+```
+
+Les tests SQLite couvrent notamment migrations sur base vierge, FK, WAL/timeout, Decimal, RBAC et création du super-admin.
