@@ -15,7 +15,12 @@ __all__ = [
     "PackForm",
     "ServiceForm",
     "QuoteRequestForm",
+    "EquipmentCategoryForm",
+    "EquipmentForm",
+    "EquipmentMovementForm",
 ]
 
 from .auth import ChangePasswordForm, CreateUserForm, LoginForm, ResetPasswordForm, UserForm
 from .rbac import RolePermissionsForm, UserRolesForm
+
+from .equipment import EquipmentCategoryForm, EquipmentForm, EquipmentMovementForm
