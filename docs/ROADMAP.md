@@ -34,10 +34,15 @@ User/Role/Permission, Flask-Login, RBAC serveur, back-office commun, gestion uti
 
 Portabilité DATABASE_URL, fallback SQLite, PRAGMA FK/WAL/timeout, tests SQLite et guide PythonAnywhere.
 
-## Validation opérationnelle PythonAnywhere
+## PROMPT 5.6 — Refonte UI/UX premium + design system
+État : **IMPLÉMENTÉ côté code/documentation**.
+
+Design tokens centralisés, site public premium, configurateur modernisé, login et shell admin responsive, tableaux/formulaires harmonisés et documentation UI.
+
+## Validation visuelle et fonctionnelle
 État : **PROCHAINE ÉTAPE**.
 
-Test fonctionnel complet de WATO EVENTS sur PythonAnywhere avec SQLite.
+Validation visuelle et fonctionnelle de WATO EVENTS sur PythonAnywhere.
 
 ## PROMPT 6 — CRM prospects / clients
 État : **EN ATTENTE APRÈS VALIDATION PYTHONANYWHERE**.
@@ -74,4 +79,4 @@ Durcissement transversal.
 ## PROMPT 16 — Déploiement PythonAnywhere
 Déploiement production, sauvegardes et procédure de mise à jour.
 
-**Prochaine étape : TEST FONCTIONNEL COMPLET DE WATO EVENTS SUR PYTHONANYWHERE.**
+**Prochaine étape : VALIDATION VISUELLE ET FONCTIONNELLE DE WATO EVENTS.**
