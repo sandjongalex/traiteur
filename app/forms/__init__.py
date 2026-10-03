@@ -6,6 +6,7 @@ from .catalog import (
     PackForm,
     ServiceForm,
 )
+from .quote_request import QuoteRequestForm
 
 __all__ = [
     "AdminAccessForm",
@@ -14,4 +15,5 @@ __all__ = [
     "MenuForm",
     "PackForm",
     "ServiceForm",
+    "QuoteRequestForm",
 ]
