@@ -4,6 +4,7 @@
 <a href="{{ url_for('admin_core.dashboard') }}">Dashboard</a>
 {% if current_user.has_permission('quote_request.view') %}<a href="{{ url_for('quote_request_admin.request_list') }}">Demandes</a>{% endif %}
 {% if current_user.has_permission('catalog.view') %}<a href="{{ url_for('catalog_admin.dashboard') }}">Catalogue</a>{% endif %}
+{% if current_user.has_permission('equipment.view') %}<a href="{{ url_for('equipment_admin.dashboard') }}">Matériel</a>{% endif %}
 {% if current_user.has_permission('user.view') %}<a href="{{ url_for('users_admin.index') }}">Utilisateurs</a>{% endif %}
 {% if current_user.has_permission('role.view') %}<a href="{{ url_for('roles_admin.index') }}">Rôles</a>{% endif %}
 {% if current_user.has_permission('audit.view') %}<a href="{{ url_for('audit_admin.index') }}">Audit</a>{% endif %}
