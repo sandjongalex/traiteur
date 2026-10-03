@@ -31,7 +31,7 @@ def _request():
     return item
 
 
-def test_quote_request_admin_requirescreate_user(); login(client):
+def test_quote_request_admin_requires_login(client):
     response = client.get("/admin/demandes-de-devis/", follow_redirects=False)
     assert response.status_code in {301, 302}
     assert "/admin/login" in response.headers["Location"]
