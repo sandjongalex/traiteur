@@ -11,3 +11,6 @@ __all__ = [
     "DuplicateSubmissionError",
     "QuoteRequestService",
 ]
+
+from .audit import AuditService
+from .rbac import RBACService, permission_required
