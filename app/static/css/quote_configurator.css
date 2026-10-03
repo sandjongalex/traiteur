@@ -78,3 +78,5 @@
   .choice-card>label:first-child{min-height:130px}
   .mobile-estimate-bar{position:sticky;bottom:.6rem;z-index:20;display:flex;align-items:center;justify-content:space-between;gap:.7rem;margin-top:1rem;padding:.7rem .8rem;border-radius:var(--radius-md);background:rgba(14,43,36,.96);color:#fff;box-shadow:var(--shadow-md)}
 }
+
+.choice-card-image{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;background:var(--color-surface-soft)}
