@@ -1,6 +1,7 @@
 from datetime import date, timedelta
 
 from app.extensions import db
+from tests.helpers import create_user, login
 from app.models.quote_request import (
     QuoteRequest,
     QuoteRequestSource,
@@ -30,23 +31,15 @@ def _request():
     return item
 
 
-def _login(client):
-    return client.post(
-        "/admin/catalogue/access",
-        data={"access_key": "testing-catalog-key"},
-        follow_redirects=False,
-    )
-
-
-def test_quote_request_admin_requires_existing_temp_admin(client):
+def test_quote_request_admin_requirescreate_user(); login(client):
     response = client.get("/admin/demandes-de-devis/", follow_redirects=False)
     assert response.status_code in {301, 302}
-    assert "/admin/catalogue/access" in response.headers["Location"]
+    assert "/admin/login" in response.headers["Location"]
 
 
 def test_admin_can_list_and_view_requests(client, app):
     item = _request()
-    _login(client)
+    create_user(); login(client)
     listing = client.get("/admin/demandes-de-devis/")
     detail = client.get(f"/admin/demandes-de-devis/{item.id}")
     assert listing.status_code == 200
@@ -57,7 +50,7 @@ def test_admin_can_list_and_view_requests(client, app):
 
 def test_admin_can_update_valid_status(client, app):
     item = _request()
-    _login(client)
+    create_user(); login(client)
     response = client.post(
         f"/admin/demandes-de-devis/{item.id}/status",
         data={"status": "REVIEWING"},
@@ -70,7 +63,7 @@ def test_admin_can_update_valid_status(client, app):
 
 def test_admin_rejects_invalid_status(client, app):
     item = _request()
-    _login(client)
+    create_user(); login(client)
     response = client.post(
         f"/admin/demandes-de-devis/{item.id}/status",
         data={"status": "WHATEVER"},
@@ -80,6 +73,6 @@ def test_admin_rejects_invalid_status(client, app):
 
 def test_no_standard_hard_delete_route(client, app):
     item = _request()
-    _login(client)
+    create_user(); login(client)
     response = client.post(f"/admin/demandes-de-devis/{item.id}/delete")
     assert response.status_code in {404, 405}
