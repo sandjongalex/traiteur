@@ -85,6 +85,7 @@ def _register_cli(app):
     from .services.audit import AuditService
     from .services.rbac import RBACService
     from .models.equipment import EquipmentCategory
+    from .models.catalog import PricingUnit, Service
 
     @app.cli.command("db-check")
     def db_check():
@@ -115,6 +116,72 @@ def _register_cli(app):
                 created += 1
         db.session.commit()
         click.echo(f"Catégories matériel prêtes : {created} créée(s).")
+
+    @app.cli.command("seed-rental-services")
+    def seed_rental_services():
+        defaults = [
+            (
+                "location-chaises",
+                "Location de chaises",
+                "Location de chaises pour mariages, anniversaires, réceptions et événements.",
+            ),
+            (
+                "location-tables",
+                "Location de tables",
+                "Location de tables pour repas, buffets, cocktails et cérémonies.",
+            ),
+            (
+                "location-tentes",
+                "Location de tentes",
+                "Location de tentes et abris pour événements extérieurs.",
+            ),
+            (
+                "location-marmites-chauffantes",
+                "Location de marmites chauffantes",
+                "Location de marmites chauffantes / chafing dishes pour le maintien au chaud des plats.",
+            ),
+            (
+                "location-vaisselle-couverts",
+                "Location de vaisselle et couverts",
+                "Location d’assiettes, verres, cuillères, fourchettes, couteaux et accessoires de table.",
+            ),
+            (
+                "location-caisses-isothermes",
+                "Location de caisses isothermes",
+                "Location de caisses isothermes et glacières pour le transport et la conservation.",
+            ),
+        ]
+
+        created = 0
+        updated = 0
+        for order, (slug, name, description) in enumerate(defaults, start=10):
+            service = db.session.scalar(select(Service).where(Service.slug == slug))
+            if service is None:
+                service = Service(
+                    slug=slug,
+                    name=name,
+                    short_description=description[:320],
+                    description=description,
+                    base_price=None,
+                    pricing_unit=PricingUnit.ON_REQUEST.value,
+                    is_featured=False,
+                    is_active=True,
+                    is_public=False,
+                    display_order=order,
+                )
+                db.session.add(service)
+                created += 1
+            else:
+                service.name = name
+                service.short_description = description[:320]
+                service.description = description
+                service.is_active = True
+                updated += 1
+
+        db.session.commit()
+        click.echo(
+            f"Services de location prêts : {created} créé(s), {updated} déjà existant(s)/mis à jour."
+        )
 
     @app.cli.command("create-superadmin")
     @click.option("--email",prompt=True)
