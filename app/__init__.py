@@ -20,6 +20,7 @@ def create_app(config_name: str | None = None) -> Flask:
     if env_name=="production": config_class.validate()
 
     app=Flask(__name__,instance_relative_config=True); app.config.from_object(config_class)
+    app.config["SQLALCHEMY_DATABASE_URI"] = config_class.database_uri()
     Path(app.instance_path).mkdir(parents=True,exist_ok=True); Path(app.config["UPLOAD_FOLDER"]).mkdir(parents=True,exist_ok=True)
     db.init_app(app); migrate.init_app(app,db); csrf.init_app(app); login_manager.init_app(app)
 
