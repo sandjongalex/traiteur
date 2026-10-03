@@ -60,3 +60,22 @@ Ne jamais annoncer un test comme réussi s'il n'a pas été réellement exécut�
 Tests ajoutés : hash/vérification mot de passe, unicité email, seed idempotent, login correct/incorrect/inexistant/inactif, logout, route protégée, open redirect, matrice RBAC, requête forgée directe, bypass SUPER_ADMIN, dernier SUPER_ADMIN, ancien `catalog_admin` inefficace, audit login/désactivation. Les anciens tests admin Catalogue et QuoteRequest ont été migrés vers de vrais comptes RBAC.
 
 L’environnement conversationnel ne contient pas Flask ; aucun résultat pytest n’est revendiqué sans exécution réelle.
+
+
+## PROMPT 5.5 — SQLite
+
+Les tests rapides utilisent toujours SQLite en mémoire. Un fichier de tests dédié valide aussi une vraie DB SQLite temporaire :
+
+- PRAGMA `foreign_keys=ON` ;
+- `busy_timeout` ;
+- WAL ;
+- base absente → `db upgrade` → HEAD ;
+- présence des tables attendues ;
+- révision `20261003_03_auth_rbac` ;
+- `seed-rbac` relancé sans doublon ;
+- `create-superadmin` en CLI ;
+- FK invalide refusée ;
+- `Numeric/Decimal` préservé ;
+- downgrade puis upgrade sur base temporaire.
+
+Ces tests ne remplacent pas une future validation MySQL. Avant bascule vers MySQL, migrations, contraintes, concurrence et transactions devront être exécutées réellement sur MySQL.
