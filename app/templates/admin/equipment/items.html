@@ -1,0 +1,25 @@
+{% extends "admin/base.html" %}
+{% block admin_content %}
+<section class="admin-page-heading admin-page-heading-row">
+<div><p class="eyebrow">Matériel</p><h1>Inventaire</h1><p>Quantités calculées depuis l’historique des mouvements.</p></div>
+{% if current_user.has_permission('equipment.create') %}<a class="btn btn-primary" href="{{ url_for('equipment_admin.item_create') }}">+ Ajouter du matériel</a>{% endif %}
+</section>
+{% if items %}
+<div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Matériel</th><th>Catégorie</th><th>État</th><th>Total</th><th>Disponible</th><th>Sortie</th><th>Maintenance</th><th>Perdu</th><th>Cassé</th><th>Actions</th></tr></thead><tbody>
+{% for item in items %}{% set b=balances[item.id] %}
+<tr>
+<td data-label="Matériel"><strong>{{ item.name }}</strong><small>{{ item.reference or item.unit }}</small></td>
+<td data-label="Catégorie">{{ item.category.name }}</td>
+<td data-label="État">{{ item.condition }}</td>
+<td data-label="Total">{{ b.total }}</td>
+<td data-label="Disponible"><span class="badge {{ 'badge-live' if b.available > 0 else 'badge-muted' }}">{{ b.available }}</span></td>
+<td data-label="Sortie">{{ b.out }}</td>
+<td data-label="Maintenance">{{ b.maintenance }}</td>
+<td data-label="Perdu">{{ b.lost }}</td>
+<td data-label="Cassé">{{ b.broken }}</td>
+<td data-label="Actions" class="admin-actions"><a href="{{ url_for('equipment_admin.item_detail', item_id=item.id) }}">Détail</a>{% if current_user.has_permission('equipment.edit') %}<a href="{{ url_for('equipment_admin.item_edit', item_id=item.id) }}">Modifier</a>{% endif %}{% if current_user.has_permission('equipment.move') %}<a href="{{ url_for('equipment_admin.movement_create', item_id=item.id) }}">Mouvement</a>{% endif %}</td>
+</tr>
+{% endfor %}
+</tbody></table></div>
+{% else %}<div class="admin-empty"><h2>Aucun matériel.</h2><p>Ajoutez par exemple vos tentes, caisses, couverts ou marmites chauffantes.</p></div>{% endif %}
+{% endblock %}
