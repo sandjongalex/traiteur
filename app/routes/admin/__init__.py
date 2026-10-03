@@ -1,15 +1,11 @@
 from flask import Blueprint
 
-catalog_admin_bp = Blueprint(
-    "catalog_admin",
-    __name__,
-    url_prefix="/admin/catalogue",
-)
+admin_auth_bp=Blueprint("admin_auth",__name__,url_prefix="/admin")
+admin_core_bp=Blueprint("admin_core",__name__,url_prefix="/admin")
+catalog_admin_bp=Blueprint("catalog_admin",__name__,url_prefix="/admin/catalogue")
+quote_request_admin_bp=Blueprint("quote_request_admin",__name__,url_prefix="/admin/demandes-de-devis")
+users_admin_bp=Blueprint("users_admin",__name__,url_prefix="/admin/users")
+roles_admin_bp=Blueprint("roles_admin",__name__,url_prefix="/admin/roles")
+audit_admin_bp=Blueprint("audit_admin",__name__,url_prefix="/admin/audit")
 
-quote_request_admin_bp = Blueprint(
-    "quote_request_admin",
-    __name__,
-    url_prefix="/admin/demandes-de-devis",
-)
-
-from . import catalog, quote_requests  # noqa: E402,F401
+from . import auth,core,catalog,quote_requests,users,roles,audit  # noqa: E402,F401
