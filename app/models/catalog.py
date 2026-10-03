@@ -40,6 +40,7 @@ class Category(TimestampMixin, db.Model):
     __tablename__ = "catalog_categories"
     __table_args__ = (
         UniqueConstraint("slug", name="uq_catalog_categories_slug"),
+        CheckConstraint("category_type IN ('DISH', 'SERVICE', 'MENU', 'PACK')", name="category_type_valid"),
         CheckConstraint("display_order >= 0", name="category_display_order_nonnegative"),
         Index("ix_catalog_categories_type_active", "category_type", "is_active"),
     )
@@ -59,6 +60,7 @@ class Service(TimestampMixin, db.Model):
     __tablename__ = "catalog_services"
     __table_args__ = (
         UniqueConstraint("slug", name="uq_catalog_services_slug"),
+        CheckConstraint("pricing_unit IN ('FIXED', 'PER_PERSON', 'PER_UNIT', 'PER_HOUR', 'ON_REQUEST')", name="service_pricing_unit_valid"),
         CheckConstraint("display_order >= 0", name="service_display_order_nonnegative"),
         CheckConstraint("base_price IS NULL OR base_price >= 0", name="service_price_nonnegative"),
         Index("ix_catalog_services_public_order", "is_active", "is_public", "display_order"),
@@ -86,6 +88,7 @@ class Dish(TimestampMixin, db.Model):
     __tablename__ = "catalog_dishes"
     __table_args__ = (
         UniqueConstraint("slug", name="uq_catalog_dishes_slug"),
+        CheckConstraint("pricing_unit IN ('FIXED', 'PER_PERSON', 'PER_UNIT', 'PER_HOUR', 'ON_REQUEST')", name="dish_pricing_unit_valid"),
         CheckConstraint("display_order >= 0", name="dish_display_order_nonnegative"),
         CheckConstraint("base_price IS NULL OR base_price >= 0", name="dish_price_nonnegative"),
         Index("ix_catalog_dishes_public_order", "is_active", "is_public", "display_order"),
@@ -118,6 +121,7 @@ class Menu(TimestampMixin, db.Model):
     __tablename__ = "catalog_menus"
     __table_args__ = (
         UniqueConstraint("slug", name="uq_catalog_menus_slug"),
+        CheckConstraint("pricing_unit IN ('FIXED', 'PER_PERSON', 'PER_UNIT', 'PER_HOUR', 'ON_REQUEST')", name="menu_pricing_unit_valid"),
         CheckConstraint("display_order >= 0", name="menu_display_order_nonnegative"),
         CheckConstraint("price IS NULL OR price >= 0", name="menu_price_nonnegative"),
         CheckConstraint("minimum_people IS NULL OR minimum_people > 0", name="menu_minimum_people_positive"),
@@ -178,6 +182,7 @@ class Pack(TimestampMixin, db.Model):
     __tablename__ = "catalog_packs"
     __table_args__ = (
         UniqueConstraint("slug", name="uq_catalog_packs_slug"),
+        CheckConstraint("pricing_unit IN ('FIXED', 'PER_PERSON', 'PER_UNIT', 'PER_HOUR', 'ON_REQUEST')", name="pack_pricing_unit_valid"),
         CheckConstraint("display_order >= 0", name="pack_display_order_nonnegative"),
         CheckConstraint("price IS NULL OR price >= 0", name="pack_price_nonnegative"),
         CheckConstraint("minimum_people IS NULL OR minimum_people > 0", name="pack_minimum_people_positive"),
