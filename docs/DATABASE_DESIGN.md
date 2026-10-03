@@ -1,78 +1,85 @@
 # Conception de base de données — WATO EVENTS
 
-## 1. Principes
+## Principes
 
-MySQL en production, SQLAlchemy comme ORM et Alembic/Flask-Migrate pour toute évolution.
+MySQL en production, SQLAlchemy comme ORM et Alembic/Flask-Migrate pour toute évolution. Les montants utilisent Decimal / NUMERIC et les invariants essentiels sont protégés côté DB.
 
-Conventions :
+## Domaine catalogue
 
-- PK technique `id` ;
-- FK explicites ;
-- timestamps `created_at`, `updated_at` ;
-- montants `NUMERIC/DECIMAL` ;
-- contraintes DB pour l'intégrité ;
-- index sur relations et filtres publics.
+Tables existantes :
 
-## 2. Domaine catalogue implémenté
+- catalog_categories
+- catalog_services
+- catalog_dishes
+- catalog_menus
+- catalog_menu_items
+- catalog_packs
+- catalog_pack_dishes
+- catalog_pack_menus
+- catalog_pack_services
 
-### catalog_categories
-Catégories typées via `category_type` : DISH, SERVICE, MENU, PACK.
+## Domaine QuoteRequest
 
-### catalog_services
-Prestations vendables avec prix optionnel, pricing_unit, publication et mise en avant.
+### quote_request_sequences
 
-### catalog_dishes
-Plats vendables, catégorie optionnelle et mêmes contrôles de publication.
+Compteur annuel des références DEM.
 
-### catalog_menus
-Compositions culinaires avec prix, unité de tarification et minimum de personnes.
+Contrainte unique : `year`.
 
-### catalog_menu_items
-Association Menu ↔ Dish avec quantité, section, ordre et caractère optionnel.
+### quote_requests
 
-### catalog_packs
-Offres groupées avec prix, minimum de personnes et publication.
+Contient notamment :
 
-### catalog_pack_dishes / catalog_pack_menus / catalog_pack_services
-Associations explicites du contenu d'un pack.
+- reference unique ;
+- public_token unique ;
+- submission_token unique ;
+- status / source contrôlés ;
+- coordonnées ;
+- événement ;
+- budget ;
+- estimation ;
+- devise ;
+- timestamps.
 
-## 3. Argent
+Contraintes :
 
-Catalogue :
+- guest_count > 0 ;
+- budgets >= 0 ;
+- budget_max >= budget_min ;
+- estimated_total >= 0.
 
-- Python : `Decimal` ;
-- SQL : `NUMERIC(14,2)` ;
-- quantités d'association : `NUMERIC(10,2)`.
+Index principaux : statut+création, event_date, phone, email.
 
-Aucun `float`.
+### quote_request_items
 
-## 4. Contraintes importantes
+Snapshot de la sélection au moment de l'envoi :
 
-- slug unique par table ;
-- prix >= 0 ou NULL ;
-- display_order >= 0 ;
-- minimum_people > 0 ou NULL ;
-- quantity > 0 ;
-- pricing_unit limité aux valeurs supportées ;
-- category_type limité aux valeurs supportées.
+- item_type ;
+- item_id ;
+- label_snapshot ;
+- quantity ;
+- unit_price_snapshot ;
+- pricing_unit_snapshot ;
+- estimated_subtotal.
 
-## 5. Cascades
+`item_type + item_id` n'est pas une FK polymorphique : l'intégrité de disponibilité est validée par PricingService à la création, tandis que le snapshot garantit l'historique.
 
-- Menu → MenuItem : `CASCADE` car MenuItem est une composition interne du Menu ;
-- Pack → associations : `CASCADE` pour la même raison ;
-- Dish/Menu/Service référencés depuis associations : `RESTRICT` afin d'éviter une suppression accidentelle de l'élément source ;
-- Category → Dish : `RESTRICT`.
+FK `quote_request_id` utilise CASCADE car les items sont constitutifs de la demande. L'interface standard ne propose toutefois aucun hard delete de QuoteRequest.
 
-Les offres métier sont destinées à être désactivées/dépubliées plutôt que supprimées.
+## Migration
 
-## 6. Performance
+Chaîne actuelle :
 
-Les listes publiques Menu/Pack utilisent `selectinload` pour éviter les N+1 sur leurs compositions.
+`20261003_01_catalog → 20261003_02_quote_requests`
 
-Les index publics combinent notamment :
+Aucune branche Alembic parallèle.
 
-`is_active, is_public, display_order`.
+## Argent
 
-## 7. Évolution future
+- prix : NUMERIC(14,2) ;
+- quantités snapshot : NUMERIC(12,2) ;
+- Python : Decimal uniquement.
 
-QuoteItem n'existe pas encore. Il devra capturer un snapshot de label, quantité, prix unitaire, remise, taxe et total afin qu'un changement du catalogue ne modifie jamais un devis historique.
+## Évolution future
+
+QuoteRequest pourra être relié ultérieurement à Prospect/Customer puis à Quote, sans modifier ses snapshots historiques.
