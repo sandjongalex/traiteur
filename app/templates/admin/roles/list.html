@@ -1,1 +1,14 @@
-{% extends "admin/base.html" %}{% block admin_content %}<h1>Rôles</h1><div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Code</th><th>Nom</th><th>Permissions</th><th></th></tr></thead><tbody>{% for r in items %}<tr><td>{{ r.code }}</td><td>{{ r.name }}</td><td>{{ r.permissions|map(attribute='code')|join(', ') or ('Toutes (bypass)' if r.code=='SUPER_ADMIN' else '—') }}</td><td>{% if current_user.has_permission('role.manage') and r.code!='SUPER_ADMIN' %}<a href="{{ url_for('roles_admin.edit',role_id=r.id) }}">Modifier</a>{% endif %}</td></tr>{% endfor %}</tbody></table></div>{% endblock %}
+{% extends "admin/base.html" %}
+{% block admin_content %}
+<section class="admin-page-heading"><p class="eyebrow">Sécurité</p><h1>Rôles & permissions</h1><p>Les permissions sont accordées par rôle et appliquées côté serveur.</p></section>
+{% if items %}
+<div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Code</th><th>Nom</th><th>Permissions</th><th>Action</th></tr></thead><tbody>
+{% for r in items %}<tr>
+<td data-label="Code"><span class="badge badge-muted">{{ r.code }}</span></td>
+<td data-label="Nom"><strong>{{ r.name }}</strong></td>
+<td data-label="Permissions">{% if r.code == 'SUPER_ADMIN' %}<span class="badge badge-warning">Toutes les permissions</span>{% elif r.permissions %}<div class="permission-cloud">{% for p in r.permissions %}<span class="badge badge-muted">{{ p.code }}</span>{% endfor %}</div>{% else %}—{% endif %}</td>
+<td data-label="Action" class="admin-actions">{% if current_user.has_permission('role.manage') and r.code!='SUPER_ADMIN' %}<a href="{{ url_for('roles_admin.edit',role_id=r.id) }}">Modifier</a>{% else %}<span>—</span>{% endif %}</td>
+</tr>{% endfor %}
+</tbody></table></div>
+{% else %}<div class="admin-empty"><h2>Aucun rôle.</h2></div>{% endif %}
+{% endblock %}
