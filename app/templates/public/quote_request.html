@@ -1,1 +1,51 @@
-{% extends "base.html" %}{% block content %}<section class="page-hero quote-page"><div class="container narrow"><p class="eyebrow">Demande de devis</p><h1>Préparez les informations essentielles de votre événement.</h1><p>Le configurateur complet arrivera au PROMPT 4. Pour l’instant, cette page vous aide à rassembler les éléments qui permettront à WATO EVENTS d’étudier votre besoin.</p></div></section><section class="section"><div class="container quote-layout"><div><p class="eyebrow">Votre brief</p><h2>Les informations utiles.</h2><div class="brief-grid"><div><span>01</span><strong>Type d’événement</strong><p>Mariage, anniversaire, séminaire, réception…</p></div><div><span>02</span><strong>Date & lieu</strong><p>Quand et où souhaitez-vous organiser la prestation ?</p></div><div><span>03</span><strong>Nombre de personnes</strong><p>Une estimation aide à dimensionner la proposition.</p></div><div><span>04</span><strong>Menus & service</strong><p>Buffet, cocktail, repas, boissons, personnel ou options.</p></div></div></div><aside class="quote-aside"><h2>Types d’événements</h2><div class="pill-list">{% for event in event_types %}<span>{{ event }}</span>{% endfor %}</div><p>Une estimation initiale n’est pas un devis contractuel. La proposition finale sera vérifiée et validée par WATO EVENTS.</p>{% if site.whatsapp_url %}<a class="btn btn-gold" href="{{ site.whatsapp_url }}" rel="noopener">Continuer sur WhatsApp</a>{% else %}<a class="btn btn-primary" href="{{ url_for('public.contact') }}">Voir les moyens de contact</a>{% endif %}</aside></div></section>{% endblock %}
+{% extends "base.html" %}
+{% block head %}<link rel="stylesheet" href="{{ url_for('static', filename='css/quote_configurator.css') }}">{% endblock %}
+{% block content %}
+<section class="page-hero quote-page">
+  <div class="container narrow">
+    <p class="eyebrow">Configurateur WATO EVENTS</p>
+    <h1>Configurez votre événement, étape par étape.</h1>
+    <p>Obtenez une estimation indicative à partir des éléments actuellement publiés. Le montant définitif sera confirmé après étude de votre demande.</p>
+  </div>
+</section>
+<section class="section configurator-section">
+<div class="container configurator-shell" data-configurator>
+  <div class="config-progress" aria-label="Progression">
+    <span class="is-active" data-progress="1">1 <small>Événement</small></span><span data-progress="2">2 <small>Prestations</small></span><span data-progress="3">3 <small>Coordonnées</small></span><span data-progress="4">4 <small>Récapitulatif</small></span>
+  </div>
+  {% with messages = get_flashed_messages(with_categories=true) %}{% if messages %}<div class="config-alerts" aria-live="polite">{% for category, message in messages %}<div class="config-alert {{ category }}">{{ message }}</div>{% endfor %}</div>{% endif %}{% endwith %}
+  {% if form.errors %}<div class="config-alert error" role="alert"><strong>Certains champs doivent être corrigés.</strong><ul>{% for field, errors in form.errors.items() %}{% for error in errors %}<li>{{ error }}</li>{% endfor %}{% endfor %}</ul></div>{% endif %}
+  <form method="post" data-config-form novalidate>
+    {{ form.hidden_tag() }}<div class="honeypot" aria-hidden="true">{{ form.website(tabindex="-1", autocomplete="off") }}</div>
+    <fieldset class="config-step is-active" data-step="1">
+      <legend>Votre événement</legend><p class="step-intro">Commençons par les informations nécessaires pour dimensionner la prestation.</p>
+      <div class="config-form-grid">
+        <label>{{ form.event_type.label }}{{ form.event_type() }}</label><label>{{ form.event_date.label }}{{ form.event_date() }}</label><label>{{ form.event_time.label }}{{ form.event_time() }}</label><label>{{ form.guest_count.label }}{{ form.guest_count(min="1", max="100000", inputmode="numeric") }}</label><label class="field-wide">{{ form.location.label }}{{ form.location(placeholder="Ex. Yaoundé — Bastos") }}</label>
+      </div><div class="step-actions"><button class="btn btn-primary" type="button" data-next>Continuer</button></div>
+    </fieldset>
+    <fieldset class="config-step" data-step="2">
+      <legend>Prestations, menus & packs</legend><p class="step-intro">Sélectionnez ce qui vous intéresse. Les prix sont recalculés côté serveur au moment de l’envoi.</p>
+      {% for title, items, type_name, field_name in [("Services", services, "SERVICE", "service_ids"),("Menus", menus, "MENU", "menu_ids"),("Packs", packs, "PACK", "pack_ids")] %}
+      {% if items %}<div class="choice-section"><h2>{{ title }}</h2><div class="choice-grid">{% for item in items %}{% set price = item.base_price if type_name == "SERVICE" else item.price %}<article class="choice-card"><label>
+        <input type="checkbox" name="{{ field_name }}" value="{{ item.id }}" data-catalog-choice data-type="{{ type_name }}" data-label="{{ item.name }}" data-pricing="{{ item.pricing_unit }}" data-price="{{ price if price is not none else '' }}" data-minimum="{{ item.minimum_people if type_name != 'SERVICE' and item.minimum_people else '' }}" {% if item.id in preselected[field_name.replace('_ids','s')] %}checked{% endif %}>
+        <span class="choice-check" aria-hidden="true">✓</span><strong>{{ item.name }}</strong><small>{{ item.short_description or "Offre WATO EVENTS" }}{% if type_name != "SERVICE" and item.minimum_people %} · minimum {{ item.minimum_people }} pers.{% endif %}</small><b>{{ price|money(item.pricing_unit) }}</b>
+      </label>{% if item.pricing_unit in ['PER_UNIT','PER_HOUR'] %}<label class="quantity-field">Quantité / heures<input type="number" name="quantity_{{ type_name.lower() }}_{{ item.id }}" value="1" min="1" max="10000" inputmode="decimal"></label>{% endif %}</article>{% endfor %}</div></div>{% endif %}
+      {% endfor %}
+      {% if not services and not menus and not packs %}<div class="catalog-empty-public"><p>Le catalogue public est encore vide. Vous pouvez tout de même envoyer votre besoin sans sélectionner d’offre précise.</p></div>{% endif %}
+      <div class="estimate-box" aria-live="polite"><span>ESTIMATION INDICATIVE</span><strong data-estimate-total>À calculer selon vos choix</strong><p data-estimate-note>Le montant définitif sera confirmé par WATO EVENTS après étude de votre demande.</p></div>
+      <div class="step-actions"><button class="btn btn-outline" type="button" data-prev>Retour</button><button class="btn btn-primary" type="button" data-next>Continuer</button></div>
+    </fieldset>
+    <fieldset class="config-step" data-step="3">
+      <legend>Budget & coordonnées</legend><div class="config-form-grid">
+        <label>{{ form.budget_min.label }}{{ form.budget_min(min="0", inputmode="decimal", placeholder="Optionnel") }}</label><label>{{ form.budget_max.label }}{{ form.budget_max(min="0", inputmode="decimal", placeholder="Optionnel") }}</label><label class="field-wide">{{ form.notes.label }}{{ form.notes(rows="4", placeholder="Parlez-nous de vos attentes particulières…") }}</label><label>{{ form.customer_name.label }}{{ form.customer_name(autocomplete="name") }}</label><label>{{ form.phone.label }}{{ form.phone(autocomplete="tel", inputmode="tel", placeholder="+237 …") }}</label><label>{{ form.whatsapp.label }}{{ form.whatsapp(inputmode="tel", placeholder="+237 …") }}</label><label>{{ form.email.label }}{{ form.email(autocomplete="email", inputmode="email") }}</label>
+      </div><p class="contact-help">Indiquez au moins un moyen de contact : téléphone, WhatsApp ou email.</p><div class="step-actions"><button class="btn btn-outline" type="button" data-prev>Retour</button><button class="btn btn-primary" type="button" data-next>Voir le récapitulatif</button></div>
+    </fieldset>
+    <fieldset class="config-step" data-step="4">
+      <legend>Vérifiez avant d’envoyer</legend><div class="summary-card" data-summary>
+        <div><span>Événement</span><strong data-summary-event>—</strong></div><div><span>Date / lieu</span><strong data-summary-date>—</strong></div><div><span>Invités</span><strong data-summary-guests>—</strong></div><div class="summary-wide"><span>Sélections</span><div data-summary-items>—</div></div><div><span>Budget</span><strong data-summary-budget>—</strong></div><div><span>Contact</span><strong data-summary-contact>—</strong></div><div class="summary-wide summary-estimate"><span>ESTIMATION INDICATIVE</span><strong data-summary-estimate>—</strong><small>Cette estimation est fournie à titre indicatif. Le montant définitif sera confirmé par WATO EVENTS après étude de votre demande.</small></div>
+      </div><div class="step-actions"><button class="btn btn-outline" type="button" data-prev>Modifier</button><button class="btn btn-gold" type="submit" data-submit>Envoyer ma demande</button></div>
+    </fieldset>
+  </form>
+</div></section>
+<script src="{{ url_for('static', filename='js/quote_configurator.js') }}" defer></script>
+{% endblock %}
