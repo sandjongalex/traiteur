@@ -1,0 +1,35 @@
+{% extends "admin/base.html" %}
+{% block admin_content %}
+<section class="admin-page-heading admin-page-heading-row">
+<div><p class="eyebrow">Matériel</p><h1>{{ item.name }}</h1><p>{{ item.category.name }} · {{ item.reference or 'Sans référence' }}</p></div>
+<div class="form-actions">
+{% if current_user.has_permission('equipment.move') %}<a class="btn btn-primary" href="{{ url_for('equipment_admin.movement_create', item_id=item.id) }}">+ Mouvement</a>{% endif %}
+{% if current_user.has_permission('equipment.edit') %}<a class="btn btn-outline" href="{{ url_for('equipment_admin.item_edit', item_id=item.id) }}">Modifier</a>{% endif %}
+</div>
+</section>
+
+<div class="admin-kpi-grid equipment-kpi-grid">
+<div class="equipment-stat"><span>Total</span><strong>{{ balance.total }}</strong><small>{{ item.unit }}</small></div>
+<div class="equipment-stat"><span>Disponible</span><strong>{{ balance.available }}</strong><small>{{ item.unit }}</small></div>
+<div class="equipment-stat"><span>En sortie</span><strong>{{ balance.out }}</strong><small>{{ item.unit }}</small></div>
+<div class="equipment-stat"><span>Maintenance</span><strong>{{ balance.maintenance }}</strong><small>{{ item.unit }}</small></div>
+<div class="equipment-stat"><span>Perdu / cassé</span><strong>{{ balance.lost + balance.broken }}</strong><small>{{ item.unit }}</small></div>
+</div>
+
+<div class="request-admin-grid" style="margin-top:1.2rem">
+<section class="admin-panel"><h2>Fiche</h2><dl class="detail-list">
+<div><dt>État</dt><dd>{{ item.condition }}</dd></div>
+<div><dt>Unité</dt><dd>{{ item.unit }}</dd></div>
+<div><dt>Prix achat</dt><dd>{{ (item.purchase_price|string) + ' FCFA' if item.purchase_price is not none else '—' }}</dd></div>
+<div><dt>Remplacement</dt><dd>{{ (item.replacement_value|string) + ' FCFA' if item.replacement_value is not none else '—' }}</dd></div>
+<div><dt>Notes</dt><dd>{{ item.notes or '—' }}</dd></div>
+</dl></section>
+<section class="admin-panel"><h2>Photo</h2>{% if item.image_path %}<img src="{{ url_for('static', filename=item.image_path) }}" alt="{{ item.name }}" style="max-width:100%;border-radius:14px">{% else %}<p>Aucune photo.</p>{% endif %}</section>
+</div>
+
+<section class="admin-panel"><h2>Historique des mouvements</h2>
+{% if movements %}<div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Date</th><th>Type</th><th>Quantité</th><th>Note</th></tr></thead><tbody>
+{% for movement in movements %}<tr><td data-label="Date">{{ movement.occurred_at.strftime('%d/%m/%Y %H:%M') }}</td><td data-label="Type">{{ movement.movement_type }}</td><td data-label="Quantité">{{ movement.quantity }} {{ item.unit }}</td><td data-label="Note">{{ movement.note or '—' }}</td></tr>{% endfor %}
+</tbody></table></div>{% else %}<p>Aucun mouvement enregistré.</p>{% endif %}
+</section>
+{% endblock %}
