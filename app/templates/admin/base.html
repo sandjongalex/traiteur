@@ -54,23 +54,18 @@
         <div class="admin-topbar-user-copy"><strong>{{ current_user.full_name }}</strong><small>{{ current_user.roles|map(attribute='name')|join(', ') }}</small></div>
       </div>
     </header>
-    <main class="admin-main" id="admin-content">
-      <div class="container">
+{% endif %}
+    <main class="{{ 'admin-main' if current_user.is_authenticated else 'admin-login-root' }}" id="admin-content">
+      {% if current_user.is_authenticated %}<div class="container">{% endif %}
         {% with messages=get_flashed_messages(with_categories=true) %}
           {% if messages %}<div class="flash-stack" aria-live="polite">{% for category,message in messages %}<div class="flash flash-{{ category }}">{{ message }}</div>{% endfor %}</div>{% endif %}
         {% endwith %}
         {% block admin_content %}{% endblock %}
-      </div>
+      {% if current_user.is_authenticated %}</div>{% endif %}
     </main>
+{% if current_user.is_authenticated %}
   </div>
 </div>
-{% else %}
-<main id="admin-content">
-  {% with messages=get_flashed_messages(with_categories=true) %}
-    {% if messages %}<div class="container flash-stack" aria-live="polite">{% for category,message in messages %}<div class="flash flash-{{ category }}">{{ message }}</div>{% endfor %}</div>{% endif %}
-  {% endwith %}
-  {% block admin_public_content %}{% block admin_content %}{% endblock %}{% endblock %}
-</main>
 {% endif %}
 <script src="{{ url_for('static', filename='js/admin.js') }}" defer></script>
 </body>
