@@ -20,6 +20,9 @@
   {% include "components/navbar.html" %}
   <main id="contenu">{% block content %}{% endblock %}</main>
   {% include "components/footer.html" %}
+  {% if site.whatsapp_url %}
+    <a class="whatsapp-fab" href="{{ site.whatsapp_url }}" rel="noopener" aria-label="Contacter WATO EVENTS sur WhatsApp">WhatsApp</a>
+  {% endif %}
   <script src="{{ url_for('static', filename='js/public.js') }}" defer></script>
 </body>
 </html>
