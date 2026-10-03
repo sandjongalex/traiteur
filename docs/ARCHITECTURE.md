@@ -326,3 +326,18 @@ Décisions :
 Flask-Login est initialisé dans l’application factory. Les comptes User sont distincts du futur domaine Employee. Les permissions sont résolues via relations User↔Role↔Permission et contrôlées par `permission_required`.
 
 Le back-office commun vit sous `/admin`. Catalogue et QuoteRequest réutilisent ce système et aucun accès par clé temporaire n’est conservé. AuditService centralise la création d’AuditLog. Le seed RBAC crée les données de sécurité, tandis que la migration ne crée que le schéma.
+
+
+## 22. Portabilité DB — PROMPT 5.5
+
+La couche de persistance est désormais explicitement multi-moteur via SQLAlchemy.
+
+- SQLite est le moteur opérationnel actuel pour développement, tests, démonstration et PythonAnywhere gratuit.
+- MySQL reste la cible recommandée lorsque les écritures concurrentes deviennent importantes.
+- Les modèles sont uniques ; aucun modèle spécifique SQLite/MySQL n'existe.
+- `DATABASE_URL` choisit le moteur sans modifier le code métier.
+- Le fallback développement pointe vers `instance/wato_events.db`, hors fichiers publics.
+
+Pour SQLite, la connexion active `foreign_keys=ON`, un `busy_timeout` raisonnable et WAL lorsqu'il est activé. Ces PRAGMA sont confinés à la couche de connexion et n'entrent pas dans les services métier.
+
+Les transactions applicatives existantes restent courtes. SQLite est adapté au volume actuel (site public, catalogue, demandes, quelques utilisateurs internes) mais ne doit pas être présenté comme équivalent à MySQL pour des écritures simultanées nombreuses.
