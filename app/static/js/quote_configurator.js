@@ -44,6 +44,8 @@
     root.querySelector("[data-estimate-total]").textContent = !r.lines.length
       ? "Aucune sélection chiffrée"
       : r.partial ? (r.total > 0 ? "Estimation partielle à partir de " + money(r.total) : "Montant à confirmer après étude") : "Environ " + money(r.total);
+    const mobileEstimate = root.querySelector("[data-mobile-estimate-total]");
+    if (mobileEstimate) mobileEstimate.textContent = root.querySelector("[data-estimate-total]").textContent;
     root.querySelector("[data-estimate-note]").textContent = r.partial
       ? "Certains éléments seront chiffrés après étude de votre demande."
       : "Le montant définitif sera confirmé par WATO EVENTS après étude de votre demande.";
@@ -67,12 +69,31 @@
   const show = number => {
     current = Math.max(1, Math.min(4, number));
     steps.forEach(step => step.classList.toggle("is-active", Number(step.dataset.step) === current));
-    progress.forEach(item => item.classList.toggle("is-active", Number(item.dataset.progress) <= current));
+    progress.forEach(item => {
+      const active = Number(item.dataset.progress) <= current;
+      item.classList.toggle("is-active", active);
+      if (Number(item.dataset.progress) === current) item.setAttribute("aria-current", "step");
+      else item.removeAttribute("aria-current");
+    });
     if (current === 4) fillSummary();
     root.scrollIntoView({behavior:"smooth",block:"start"});
   };
 
-  root.querySelectorAll("[data-next]").forEach(b => b.addEventListener("click", () => show(current+1)));
+  const canContinue = () => {
+    const activeStep = steps.find(step => Number(step.dataset.step) === current);
+    if (!activeStep) return true;
+    const fields = [...activeStep.querySelectorAll("input, select, textarea")].filter(field => !field.disabled && field.type !== "hidden");
+    const invalid = fields.find(field => !field.checkValidity());
+    if (invalid) {
+      invalid.reportValidity();
+      invalid.focus();
+      return false;
+    }
+    return true;
+  };
+  root.querySelectorAll("[data-next]").forEach(b => b.addEventListener("click", () => {
+    if (canContinue()) show(current+1);
+  }));
   root.querySelectorAll("[data-prev]").forEach(b => b.addEventListener("click", () => show(current-1)));
   choices.forEach(c => c.addEventListener("change", refreshEstimate));
   form.querySelectorAll("input[type='number']").forEach(i => i.addEventListener("input", refreshEstimate));
