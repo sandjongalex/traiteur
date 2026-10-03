@@ -34,6 +34,9 @@ class BaseConfig:
     JSON_SORT_KEYS = False
     SESSION_COOKIE_HTTPONLY = True
     SESSION_COOKIE_SAMESITE = "Lax"
+    PERMANENT_SESSION_LIFETIME = 28800
+    REMEMBER_COOKIE_HTTPONLY = True
+    REMEMBER_COOKIE_SAMESITE = "Lax"
 
     WATO_COMPANY_NAME = os.getenv("WATO_COMPANY_NAME", "WATO EVENTS")
     WATO_TAGLINE = os.getenv("WATO_TAGLINE", "Vos moments, notre savoir-faire.")
@@ -47,8 +50,6 @@ class BaseConfig:
     WATO_INSTAGRAM_URL = _optional_env("WATO_INSTAGRAM_URL")
     WATO_TIKTOK_URL = _optional_env("WATO_TIKTOK_URL")
     WATO_OG_IMAGE = _optional_env("WATO_OG_IMAGE")
-    # Temporary catalogue-only gate until PROMPT 5 introduces real User/RBAC.
-    WATO_CATALOG_ADMIN_KEY = _optional_env("WATO_CATALOG_ADMIN_KEY")
 
 
 class DevelopmentConfig(BaseConfig):
@@ -60,12 +61,12 @@ class TestingConfig(BaseConfig):
     SECRET_KEY = "testing-secret-key"
     SQLALCHEMY_DATABASE_URI = "sqlite+pysqlite:///:memory:"
     WTF_CSRF_ENABLED = False
-    WATO_CATALOG_ADMIN_KEY = "testing-catalog-key"
 
 
 class ProductionConfig(BaseConfig):
     DEBUG = False
     SESSION_COOKIE_SECURE = True
+    REMEMBER_COOKIE_SECURE = True
 
     @classmethod
     def validate(cls) -> None:
