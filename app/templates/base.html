@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}{{ page_title }} | {{ site.company_name }}{% endblock %}</title>
+  <meta name="description" content="{{ meta_description }}">
+  <meta name="theme-color" content="#173f35">
+  <meta property="og:title" content="{{ page_title }} | {{ site.company_name }}">
+  <meta property="og:description" content="{{ meta_description }}">
+  <meta property="og:type" content="website">
+  {% if site.og_image %}<meta property="og:image" content="{{ site.og_image }}">{% endif %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/public.css') }}">
+  {% block head %}{% endblock %}
+</head>
+<body>
+  <a class="skip-link" href="#contenu">Aller au contenu</a>
+  {% include "components/navbar.html" %}
+  <main id="contenu">{% block content %}{% endblock %}</main>
+  {% include "components/footer.html" %}
+  <script src="{{ url_for('static', filename='js/public.js') }}" defer></script>
+</body>
+</html>
