@@ -11,7 +11,7 @@
 <section class="section configurator-section">
 <div class="container configurator-shell" data-configurator>
   <div class="config-progress" aria-label="Progression">
-    <span class="is-active" data-progress="1">1 <small>Événement</small></span><span data-progress="2">2 <small>Prestations</small></span><span data-progress="3">3 <small>Coordonnées</small></span><span data-progress="4">4 <small>Récapitulatif</small></span>
+    <span class="is-active" data-progress="1" aria-current="step"><small>Événement</small></span><span data-progress="2"><small>Prestations</small></span><span data-progress="3"><small>Coordonnées</small></span><span data-progress="4"><small>Récapitulatif</small></span>
   </div>
   {% with messages = get_flashed_messages(with_categories=true) %}{% if messages %}<div class="config-alerts" aria-live="polite">{% for category, message in messages %}<div class="config-alert {{ category }}">{{ message }}</div>{% endfor %}</div>{% endif %}{% endwith %}
   {% if form.errors %}<div class="config-alert error" role="alert"><strong>Certains champs doivent être corrigés.</strong><ul>{% for field, errors in form.errors.items() %}{% for error in errors %}<li>{{ error }}</li>{% endfor %}{% endfor %}</ul></div>{% endif %}
@@ -26,13 +26,14 @@
     <fieldset class="config-step" data-step="2">
       <legend>Prestations, menus & packs</legend><p class="step-intro">Sélectionnez ce qui vous intéresse. Les prix sont recalculés côté serveur au moment de l’envoi.</p>
       {% for title, items, type_name, field_name in [("Services", services, "SERVICE", "service_ids"),("Menus", menus, "MENU", "menu_ids"),("Packs", packs, "PACK", "pack_ids")] %}
-      {% if items %}<div class="choice-section"><h2>{{ title }}</h2><div class="choice-grid">{% for item in items %}{% set price = item.base_price if type_name == "SERVICE" else item.price %}<article class="choice-card"><label>
+      {% if items %}<div class="choice-section"><h2>{{ title }}</h2><div class="choice-grid">{% for item in items %}{% set price = item.base_price if type_name == "SERVICE" else item.price %}<article class="choice-card"><img class="choice-card-image" loading="lazy" src="{{ url_for('static', filename=item.image_path or 'images/catalog-placeholder.svg') }}" alt="" width="560" height="320"><label>
         <input type="checkbox" name="{{ field_name }}" value="{{ item.id }}" data-catalog-choice data-type="{{ type_name }}" data-label="{{ item.name }}" data-pricing="{{ item.pricing_unit }}" data-price="{{ price if price is not none else '' }}" data-minimum="{{ item.minimum_people if type_name != 'SERVICE' and item.minimum_people else '' }}" {% if item.id in preselected[field_name.replace('_ids','s')] %}checked{% endif %}>
         <span class="choice-check" aria-hidden="true">✓</span><strong>{{ item.name }}</strong><small>{{ item.short_description or "Offre WATO EVENTS" }}{% if type_name != "SERVICE" and item.minimum_people %} · minimum {{ item.minimum_people }} pers.{% endif %}</small><b>{{ price|money(item.pricing_unit) }}</b>
       </label>{% if item.pricing_unit in ['PER_UNIT','PER_HOUR'] %}<label class="quantity-field">Quantité / heures<input type="number" name="quantity_{{ type_name.lower() }}_{{ item.id }}" value="1" min="1" max="10000" inputmode="decimal"></label>{% endif %}</article>{% endfor %}</div></div>{% endif %}
       {% endfor %}
       {% if not services and not menus and not packs %}<div class="catalog-empty-public"><p>Le catalogue public est encore vide. Vous pouvez tout de même envoyer votre besoin sans sélectionner d’offre précise.</p></div>{% endif %}
-      <div class="estimate-box" aria-live="polite"><span>ESTIMATION INDICATIVE</span><strong data-estimate-total>À calculer selon vos choix</strong><p data-estimate-note>Le montant définitif sera confirmé par WATO EVENTS après étude de votre demande.</p></div>
+      <div class="estimate-box" aria-live="polite"><span>VOTRE ESTIMATION INDICATIVE</span><strong data-estimate-total>À calculer selon vos choix</strong><p data-estimate-note>Le montant définitif sera confirmé par WATO EVENTS après étude de votre demande.</p></div>
+      <div class="mobile-estimate-bar" aria-live="polite"><span data-mobile-estimate-total>Estimation à calculer</span><button class="btn btn-gold" type="button" data-next>Continuer</button></div>
       <div class="step-actions"><button class="btn btn-outline" type="button" data-prev>Retour</button><button class="btn btn-primary" type="button" data-next>Continuer</button></div>
     </fieldset>
     <fieldset class="config-step" data-step="3">
