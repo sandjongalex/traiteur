@@ -37,3 +37,5 @@ __all__ = [
     "QuoteRequestSource",
     "QuoteRequestStatus",
 ]
+
+from .auth import AuditLog, Permission, Role, User, role_permissions, user_roles
