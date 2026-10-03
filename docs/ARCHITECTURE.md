@@ -293,3 +293,29 @@ Décisions effectives :
 - uploads catalogue locaux, contrôlés et remplaçables plus tard par une abstraction cloud.
 
 Le back-office catalogue utilise une clé d'accès temporaire uniquement parce que User/RBAC n'est pas encore implémenté. Cette protection doit être remplacée au PROMPT 5, sans créer un second système parallèle.
+
+
+## 20. État implémenté — QuoteRequest (PROMPT 4)
+
+Le configurateur public et les demandes commerciales sont maintenant un domaine persistant.
+
+Composants :
+
+- `app/models/quote_request.py` ;
+- `app/forms/quote_request.py` ;
+- `app/services/pricing.py` ;
+- `app/services/quote_requests.py` ;
+- route publique `/demande-de-devis` ;
+- admin `/admin/demandes-de-devis`.
+
+Décisions :
+
+- QuoteRequest est distinct de Quote ;
+- référence DEM distincte de DEV ;
+- EventType reste un enum contrôlé, sans module Event ;
+- QuoteRequestItem utilise type+ID catalogue et snapshots ;
+- PricingService recharge le catalogue et reste source de vérité ;
+- les plats ne sont pas affichés individuellement dans le configurateur MVP ;
+- minimum_people produit un warning/élément à confirmer au lieu d'un faux total ;
+- confirmation protégée par token public aléatoire ;
+- protection admin temporaire partagée avec le catalogue jusqu'au PROMPT 5.
