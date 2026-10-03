@@ -35,9 +35,21 @@ def create_app(config_name: str | None = None) -> Flask:
     for bp in (public_bp,admin_auth_bp,admin_core_bp,catalog_admin_bp,quote_request_admin_bp,users_admin_bp,roles_admin_bp,audit_admin_bp): app.register_blueprint(bp)
 
     @app.before_request
-    def enforce_active_admin_user():
-        if request.path.startswith("/admin") and current_user.is_authenticated and not current_user.is_active:
+    def enforce_admin_account_state():
+        if not request.path.startswith("/admin") or not current_user.is_authenticated:
+            return None
+        if not current_user.is_active:
             logout_user()
+            return None
+        allowed_when_password_change_required = {
+            "admin_auth.profile",
+            "admin_auth.logout",
+            "static",
+        }
+        if current_user.must_change_password and request.endpoint not in allowed_when_password_change_required:
+            from flask import redirect, url_for
+            return redirect(url_for("admin_auth.profile"))
+        return None
 
     _register_cli(app); _register_template_context(app); _register_template_filters(app); _register_error_handlers(app)
     return app
