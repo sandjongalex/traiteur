@@ -1,0 +1,29 @@
+{% extends "admin/catalog_base.html" %}
+{% block admin_content %}
+<section class="admin-page-heading"><div><p class="eyebrow">Catalogue</p><h1>{{ title }}</h1></div></section>
+<form method="post" enctype="multipart/form-data" class="catalog-form" novalidate>
+  {{ form.hidden_tag() }}
+  <div class="form-grid">
+    {% for field in form if field.name not in ["csrf_token", "submit"] %}
+      <div class="field {% if field.type in ['TextAreaField', 'SelectMultipleField'] %}field-wide{% endif %} {% if field.type == 'BooleanField' %}field-check{% endif %}">
+        {% if field.type == "BooleanField" %}
+          <label>{{ field() }} <span>{{ field.label.text }}</span></label>
+        {% else %}
+          {{ field.label }}
+          {% if field.type == "SelectMultipleField" %}
+            {{ field(size=6) }}
+            <small>Ctrl/Cmd + clic pour sélectionner plusieurs éléments.</small>
+          {% else %}
+            {{ field() }}
+          {% endif %}
+        {% endif %}
+        {% for error in field.errors %}<small class="field-error">{{ error }}</small>{% endfor %}
+      </div>
+    {% endfor %}
+  </div>
+  <div class="form-actions">
+    {{ form.submit(class_="btn btn-primary") }}
+    <a class="btn btn-outline" href="{{ request.referrer or url_for('catalog_admin.dashboard') }}">Annuler</a>
+  </div>
+</form>
+{% endblock %}
