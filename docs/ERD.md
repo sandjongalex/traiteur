@@ -1,75 +1,114 @@
-# ERD global — WATO EVENTS
+# ERD — WATO EVENTS
 
-Ce diagramme décrit le modèle relationnel cible. Il est volontairement lisible et n'affiche que les relations structurantes.
+## Domaine réellement implémenté au PROMPT 3
 
 ```mermaid
 erDiagram
-  USER ||--o| EMPLOYEE : "optional profile"
-  CUSTOMER ||--o{ QUOTE : receives
-  CUSTOMER ||--o{ ORDER : places
-  CUSTOMER ||--o{ EVENT : owns
-  PROSPECT ||--o{ QUOTE_REQUEST : submits
-  PROSPECT ||--o{ QUOTE : receives
-
-  EVENT_TYPE ||--o{ EVENT : classifies
+  CATEGORY ||--o{ DISH : classifies
 
   MENU ||--o{ MENU_ITEM : contains
   DISH ||--o{ MENU_ITEM : included
-  PACK ||--o{ QUOTE_ITEM : referenced
-  SERVICE ||--o{ QUOTE_ITEM : referenced
-  DISH ||--o{ QUOTE_ITEM : referenced
-  MENU ||--o{ QUOTE_ITEM : referenced
 
-  QUOTE_REQUEST ||--o{ QUOTE : may_generate
-  QUOTE ||--|{ QUOTE_ITEM : contains
-  QUOTE ||--o| ORDER : accepted_as
+  PACK ||--o{ PACK_DISH : contains
+  DISH ||--o{ PACK_DISH : included
 
-  ORDER ||--|{ ORDER_ITEM : contains
-  ORDER ||--o| EVENT : may_require
-  EVENT ||--o{ PAYMENT : receives
-  ORDER ||--o{ PAYMENT : receives
-  EVENT ||--o{ INVOICE : billed
-  ORDER ||--o{ INVOICE : billed
+  PACK ||--o{ PACK_MENU : contains
+  MENU ||--o{ PACK_MENU : included
 
-  SUPPLIER ||--o{ PURCHASE : supplies
-  PURCHASE ||--|{ PURCHASE_ITEM : contains
-  INGREDIENT ||--o{ PURCHASE_ITEM : purchased
-  INGREDIENT ||--o{ STOCK_MOVEMENT : moves
-  PURCHASE ||--o{ STOCK_MOVEMENT : generates
-  EVENT ||--o{ STOCK_MOVEMENT : may_consume
+  PACK ||--o{ PACK_SERVICE : contains
+  SERVICE ||--o{ PACK_SERVICE : included
 
-  EVENT ||--o{ EQUIPMENT_RESERVATION : reserves
-  EQUIPMENT ||--o{ EQUIPMENT_RESERVATION : allocated
+  CATEGORY {
+    int id PK
+    string name
+    string slug UK
+    string category_type
+    int display_order
+    bool is_active
+  }
 
-  EVENT ||--o{ EVENT_ASSIGNMENT : staffs
-  EMPLOYEE ||--o{ EVENT_ASSIGNMENT : assigned
+  SERVICE {
+    int id PK
+    string name
+    string slug UK
+    decimal base_price
+    string pricing_unit
+    bool is_featured
+    bool is_active
+    bool is_public
+    int display_order
+  }
 
-  USER ||--o{ AUDIT_LOG : performs
-  USER ||--o{ NOTIFICATION : receives
+  DISH {
+    int id PK
+    int category_id FK
+    string name
+    string slug UK
+    decimal base_price
+    string pricing_unit
+    bool is_featured
+    bool is_active
+    bool is_public
+  }
 
-  BUSINESS_SETTINGS ||--o{ GALLERY_ITEM : contextualizes
+  MENU {
+    int id PK
+    string name
+    string slug UK
+    decimal price
+    string pricing_unit
+    int minimum_people
+    bool is_featured
+    bool is_active
+    bool is_public
+  }
+
+  MENU_ITEM {
+    int id PK
+    int menu_id FK
+    int dish_id FK
+    decimal quantity
+    string section
+    int display_order
+    bool is_optional
+  }
+
+  PACK {
+    int id PK
+    string name
+    string slug UK
+    decimal price
+    string pricing_unit
+    int minimum_people
+    bool is_featured
+    bool is_active
+    bool is_public
+  }
+
+  PACK_DISH {
+    int pack_id FK
+    int dish_id FK
+    decimal quantity
+    int display_order
+  }
+
+  PACK_MENU {
+    int pack_id FK
+    int menu_id FK
+    decimal quantity
+    int display_order
+  }
+
+  PACK_SERVICE {
+    int pack_id FK
+    int service_id FK
+    decimal quantity
+    int display_order
+  }
 ```
 
-## Clés et contraintes structurantes
+## Domaines futurs
 
-Les PK utilisent des identifiants techniques internes. Les références commerciales restent séparées et uniques.
+Les entités QuoteRequest, Quote, Order, Event, Payment, Invoice, Inventory, Equipment, Employee et autres restent conceptuelles et ne sont pas encore présentes dans la base.
 
-FK importantes :
-
-- `Quote.customer_id` ou `Quote.prospect_id` selon le stade commercial ;
-- `Quote.quote_request_id` optionnel ;
-- `Order.quote_id` optionnel mais unique si une acceptation crée une seule commande ;
-- `Event.order_id` optionnel et unique pour le MVP ;
-- `Payment.event_id` / `Payment.order_id` selon le contexte ;
-- `EquipmentReservation.event_id` et `equipment_id` ;
-- `EventAssignment.event_id` et `employee_id` ;
-- `StockMovement.ingredient_id` obligatoire.
-
-Contraintes recommandées :
-
-- références commerciales uniques ;
-- quantité strictement positive sur lignes de vente/achat ;
-- montant non négatif sauf lignes/mouvements explicitement signés ;
-- dates de fin >= dates de début ;
-- unicité logique sur certaines affectations événement/personnel ;
-- index sur statuts, dates d'événements, FK, références commerciales et dates de création.
+Le futur `QuoteItem` pourra référencer une entité catalogue puis capturer un snapshot commercial sans dépendre du prix courant.
