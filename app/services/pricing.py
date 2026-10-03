@@ -53,7 +53,7 @@ class PricingService:
         except (InvalidOperation, TypeError, ValueError) as exc:
             raise PricingError("Quantité invalide.") from exc
         if quantity <= 0 or quantity > MAX_QUANTITY:
-            raise PricingError("La quantité doit être comprise entre 0 et 10 000.")
+            raise PricingError("La quantité doit être supérieure à 0 et au plus égale à 10 000.")
         return quantity
 
     @classmethod
@@ -103,13 +103,8 @@ class PricingService:
                     "La demande reste enregistrable mais le montant devra être confirmé."
                 )
 
-            if pricing_unit == PricingUnit.PER_PERSON.value:
-                quantity = Decimal(guest_count)
-            else:
-                quantity = requested_quantity
-
+            quantity = Decimal(guest_count) if pricing_unit == PricingUnit.PER_PERSON.value else requested_quantity
             unit_price = getattr(item, price_attribute)
-            subtotal: Decimal | None
 
             if pricing_unit == PricingUnit.ON_REQUEST.value or unit_price is None:
                 unit_price = None
@@ -121,11 +116,7 @@ class PricingService:
             elif pricing_unit == PricingUnit.FIXED.value:
                 quantity = Decimal("1")
                 subtotal = Decimal(unit_price)
-            elif pricing_unit in {
-                PricingUnit.PER_PERSON.value,
-                PricingUnit.PER_UNIT.value,
-                PricingUnit.PER_HOUR.value,
-            }:
+            elif pricing_unit in {PricingUnit.PER_PERSON.value, PricingUnit.PER_UNIT.value, PricingUnit.PER_HOUR.value}:
                 subtotal = Decimal(unit_price) * quantity
             else:
                 raise PricingError("Unité de tarification non prise en charge.")
@@ -145,6 +136,10 @@ class PricingService:
                     subtotal=subtotal,
                 )
             )
+
+        if not result_items:
+            has_on_request = True
+            warnings.append("Aucune offre précise n’a été sélectionnée ; le chiffrage sera confirmé après étude.")
 
         return EstimateResult(
             items=result_items,
