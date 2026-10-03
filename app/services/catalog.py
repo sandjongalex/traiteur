@@ -2,7 +2,16 @@ from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 
 from ..extensions import db
-from ..models.catalog import Dish, Menu, Pack, Service
+from ..models.catalog import (
+    Dish,
+    Menu,
+    MenuItem,
+    Pack,
+    PackDish,
+    PackMenu,
+    PackService,
+    Service,
+)
 
 
 class CatalogService:
@@ -26,7 +35,7 @@ class CatalogService:
     def public_menus(*, featured: bool | None = None):
         stmt = (
             select(Menu)
-            .options(selectinload(Menu.items).selectinload("dish"))
+            .options(selectinload(Menu.items).selectinload(MenuItem.dish))
             .where(Menu.is_active.is_(True), Menu.is_public.is_(True))
         )
         if featured is not None:
@@ -39,9 +48,9 @@ class CatalogService:
         stmt = (
             select(Pack)
             .options(
-                selectinload(Pack.dish_items).selectinload("dish"),
-                selectinload(Pack.menu_items).selectinload("menu"),
-                selectinload(Pack.service_items).selectinload("service"),
+                selectinload(Pack.dish_items).selectinload(PackDish.dish),
+                selectinload(Pack.menu_items).selectinload(PackMenu.menu),
+                selectinload(Pack.service_items).selectinload(PackService.service),
             )
             .where(Pack.is_active.is_(True), Pack.is_public.is_(True))
         )
