@@ -5,11 +5,13 @@ from sqlalchemy.orm import selectinload
 from ...extensions import db
 from ...models.quote_request import QuoteRequest, QuoteRequestItem, QuoteRequestStatus
 from . import quote_request_admin_bp
-from .catalog import catalog_admin_required
+from ...services.rbac import permission_required
+from ...services.audit import AuditService
+from flask_login import current_user
 
 
 @quote_request_admin_bp.get("/")
-@catalog_admin_required
+@permission_required("quote_request.view")
 def request_list():
     status = request.args.get("status", "").strip().upper()
     search = request.args.get("q", "").strip()
@@ -39,7 +41,7 @@ def request_list():
 
 
 @quote_request_admin_bp.get("/<int:item_id>")
-@catalog_admin_required
+@permission_required("quote_request.view")
 def request_detail(item_id):
     item = db.session.scalar(
         select(QuoteRequest)
@@ -57,7 +59,7 @@ def request_detail(item_id):
 
 
 @quote_request_admin_bp.post("/<int:item_id>/status")
-@catalog_admin_required
+@permission_required("quote_request.edit")
 def update_status(item_id):
     item = db.get_or_404(QuoteRequest, item_id)
     new_status = request.form.get("status", "").strip().upper()
@@ -66,5 +68,6 @@ def update_status(item_id):
         abort(400)
 
     item.status = new_status
+    AuditService.log("quote_request.status_change","QuoteRequest",item.id,f"Statut → {new_status}",user=current_user)
     db.session.commit()
     return redirect(url_for("quote_request_admin.request_detail", item_id=item.id))
