@@ -22,14 +22,18 @@ Livrables : architecture globale, ERD, flux métier, conception DB, RBAC, sécur
 Socle livré : application factory, configuration par environnement, SQLAlchemy, Flask-Migrate/Alembic, MySQL/PyMySQL, CSRF, route de santé, commande DB et tests de base.
 
 ## PROMPT 2 — Identité visuelle + site public
-État : **PROCHAINE ÉTAPE**.
+État : **TERMINÉ**.
 
 Construire le shell public mobile first : layout, navigation, accueil, pages institutionnelles, SEO de base et identité visuelle. Ne pas encore implémenter le catalogue métier complet.
 
 ## PROMPT 3 — Services + menus + plats + packs
-Implémenter le catalogue administrable et son affichage public. C'est le premier vrai domaine métier persistant.
+État : **TERMINÉ**.
+
+Catalogue persistant livré : Category, Service, Dish, Menu/MenuItem, Pack et associations PackDish/PackMenu/PackService, migration Alembic, back-office temporairement protégé, uploads contrôlés, prix Decimal, pages publiques DB et tests dédiés.
 
 ## PROMPT 4 — Configurateur + demandes de devis
+État : **PROCHAINE ÉTAPE**.
+
 Créer QuoteRequest, configurateur public, estimation indicative et capture prospect. Les calculs passent par PricingService.
 
 ## PROMPT 5 — Authentification + back-office + RBAC
@@ -82,4 +86,4 @@ L'ordre est retenu avec les précisions suivantes :
 
 Chaque sprint doit laisser une application fonctionnelle et préserver les données existantes.
 
-**Prochaine étape : PROMPT 3 — SERVICES + MENUS + PLATS + PACKS.**
+**Prochaine étape : PROMPT 4 — CONFIGURATEUR + DEMANDES DE DEVIS.**
