@@ -21,7 +21,7 @@
         <a href="{{ url_for('catalog_admin.dish_list') }}">Plats</a>
         <a href="{{ url_for('catalog_admin.menu_list') }}">Menus</a>
         <a href="{{ url_for('catalog_admin.pack_list') }}">Packs</a>
-        <a href="{{ url_for('catalog_admin.category_list') }}">Catégories</a>
+        <a href="{{ url_for('catalog_admin.category_list') }}">Catégories</a>\n        <a href="{{ url_for('quote_request_admin.request_list') }}">Demandes</a>
       </nav>
       <form method="post" action="{{ url_for('catalog_admin.logout') }}" class="admin-logout">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
