@@ -53,3 +53,10 @@ Cas critiques ajoutés :
 ## Règle
 
 Ne jamais annoncer un test comme réussi s'il n'a pas été réellement exécuté.
+
+
+## PROMPT 5 — Auth/RBAC
+
+Tests ajoutés : hash/vérification mot de passe, unicité email, seed idempotent, login correct/incorrect/inexistant/inactif, logout, route protégée, open redirect, matrice RBAC, requête forgée directe, bypass SUPER_ADMIN, dernier SUPER_ADMIN, ancien `catalog_admin` inefficace, audit login/désactivation. Les anciens tests admin Catalogue et QuoteRequest ont été migrés vers de vrais comptes RBAC.
+
+L’environnement conversationnel ne contient pas Flask ; aucun résultat pytest n’est revendiqué sans exécution réelle.
