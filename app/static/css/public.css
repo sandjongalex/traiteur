@@ -444,12 +444,85 @@
 .event-cloud{position:relative;z-index:1;display:flex;flex-wrap:wrap;gap:.7rem}
 .event-cloud span{padding:.7rem 1rem;border:1px solid rgba(255,255,255,.23);border-radius:999px;color:#fff;background:rgba(255,255,255,.06)}
 
-.process-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;padding:0;list-style:none;counter-reset:process}
-.process-grid li{position:relative;padding:1.35rem;border:1px solid var(--color-border);border-radius:var(--radius-md);background:#fff}
-.process-grid li::after{content:"";position:absolute;top:0;left:1.35rem;width:52px;height:3px;background:var(--color-secondary);border-radius:999px}
-.process-grid span{display:block;margin-bottom:1.8rem;color:var(--color-secondary-dark);font-size:.78rem;font-weight:900}
-.process-grid h3{font-size:1.18rem}
-.process-grid p{margin-bottom:0;font-size:.9rem}
+.home-process-section{
+  background:#fbf8f1;
+}
+.home-process-heading{
+  max-width:760px;
+  margin-bottom:2.2rem;
+}
+.home-process-heading h2{
+  max-width:720px;
+}
+.home-process-heading p:last-child{
+  max-width:680px;
+}
+.home-process-timeline{
+  position:relative;
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:1rem;
+  margin:0;
+  padding:0;
+  list-style:none;
+}
+.home-process-timeline::before{
+  content:"";
+  position:absolute;
+  top:25px;
+  left:7%;
+  right:7%;
+  height:1px;
+  background:linear-gradient(90deg,rgba(199,154,74,.18),rgba(199,154,74,.72),rgba(199,154,74,.18));
+  z-index:0;
+}
+.home-process-step{
+  position:relative;
+  z-index:1;
+  min-width:0;
+}
+.home-process-number{
+  display:grid;
+  place-items:center;
+  width:50px;
+  height:50px;
+  margin-bottom:1rem;
+  border:1px solid rgba(199,154,74,.38);
+  border-radius:50%;
+  background:#fffdf9;
+  color:var(--color-secondary-dark);
+  box-shadow:0 8px 20px rgba(14,43,36,.055);
+  font-size:.76rem;
+  font-weight:900;
+  letter-spacing:.08em;
+}
+.home-process-content{
+  min-height:170px;
+  padding:1.15rem;
+  border:1px solid rgba(23,63,53,.09);
+  border-radius:20px;
+  background:#fff;
+  box-shadow:0 8px 22px rgba(14,43,36,.045);
+}
+.home-process-content h3{
+  margin-bottom:.5rem;
+  color:var(--color-primary);
+  font-family:var(--font-body);
+  font-size:.96rem;
+  line-height:1.35;
+  font-weight:850;
+}
+.home-process-content p{
+  margin:0;
+  color:#68716c;
+  font-size:.82rem;
+  line-height:1.55;
+}
+.home-process-cta{
+  display:flex;
+  justify-content:center;
+  margin-top:1.8rem;
+}
 .process-note,.demo-note{margin-top:1.5rem;font-size:.8rem;color:#7d817e}
 
 .gallery-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
@@ -529,7 +602,6 @@ linear-gradient(180deg,#f6f0e4,#fffdf9)}
   .hero-grid{gap:2.5rem}
   .hero-visual{justify-self:stretch;max-width:680px}
   .services-grid,.catalog-grid{grid-template-columns:1fr 1fr}
-  .process-grid{grid-template-columns:1fr 1fr}
   .home-gallery{grid-template-columns:1fr 1fr}
   .gallery-grid{grid-template-columns:1fr 1fr}
   .cta-band-inner,.contact-preview-grid{align-items:flex-start;flex-direction:column}
@@ -566,7 +638,14 @@ linear-gradient(180deg,#f6f0e4,#fffdf9)}
   .trust-grid{grid-template-columns:1fr 1fr}
   .trust-grid span:nth-child(3){border-left:0;border-top:1px solid var(--color-border)}
   .trust-grid span:nth-child(4){border-top:1px solid var(--color-border)}
-  .services-grid,.catalog-grid,.why-grid,.process-grid,.gallery-grid,.home-gallery,.brief-grid{grid-template-columns:1fr}
+  .services-grid,.catalog-grid,.why-grid,.gallery-grid,.home-gallery,.brief-grid{grid-template-columns:1fr}
+  .home-process-timeline{grid-template-columns:1fr;gap:0}
+  .home-process-timeline::before{top:24px;bottom:24px;left:24px;right:auto;width:1px;height:auto;background:linear-gradient(180deg,rgba(199,154,74,.18),rgba(199,154,74,.72),rgba(199,154,74,.18))}
+  .home-process-step{display:grid;grid-template-columns:50px minmax(0,1fr);gap:.9rem;padding-bottom:1rem}
+  .home-process-number{margin:0}
+  .home-process-content{min-height:auto}
+  .home-process-cta{display:block;margin-top:.6rem}
+  .home-process-cta .btn{width:100%}
   .why-item{min-height:auto}
   .page-hero{padding:3.6rem 0 2.8rem}
   .cta-actions,.cta-actions .btn{width:100%}
@@ -594,4 +673,11 @@ linear-gradient(180deg,#f6f0e4,#fffdf9)}
 @media(prefers-reduced-motion:reduce){
   .why-item{transition:none}
   .why-item:hover{transform:none}
+}
+
+@media(prefers-reduced-motion:reduce){
+  .home-process-content,
+  .home-process-number{
+    transition:none;
+  }
 }
