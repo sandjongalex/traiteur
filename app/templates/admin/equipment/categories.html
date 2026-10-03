@@ -1,0 +1,14 @@
+{% extends "admin/base.html" %}
+{% block admin_content %}
+<section class="admin-page-heading admin-page-heading-row">
+<div><p class="eyebrow">Matériel</p><h1>Catégories</h1></div>
+{% if current_user.has_permission('equipment.create') %}<a class="btn btn-primary" href="{{ url_for('equipment_admin.category_create') }}">+ Nouvelle catégorie</a>{% endif %}
+</section>
+{% if categories %}
+<div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Nom</th><th>Code</th><th>État</th><th>Action</th></tr></thead><tbody>
+{% for category in categories %}
+<tr><td data-label="Nom"><strong>{{ category.name }}</strong><small>{{ category.description or '' }}</small></td><td data-label="Code">{{ category.code }}</td><td data-label="État"><span class="badge {{ 'badge-live' if category.is_active else 'badge-muted' }}">{{ 'Active' if category.is_active else 'Inactive' }}</span></td><td data-label="Action" class="admin-actions">{% if current_user.has_permission('equipment.edit') %}<a href="{{ url_for('equipment_admin.category_edit', item_id=category.id) }}">Modifier</a>{% endif %}</td></tr>
+{% endfor %}
+</tbody></table></div>
+{% else %}<div class="admin-empty"><h2>Aucune catégorie.</h2></div>{% endif %}
+{% endblock %}
