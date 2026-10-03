@@ -8,7 +8,7 @@ from wtforms.validators import InputRequired, Length, NumberRange, Optional
 from ..models.equipment import EquipmentCondition, EquipmentMovementType
 
 
-IMAGE_EXTENSIONS = ["jpg", "jpeg", "png", "webp"]
+IMAGE_EXTENSIONS = ["jpg", "jpeg", "jfif", "png", "webp"]
 
 
 CONDITION_CHOICES = [
@@ -62,7 +62,7 @@ class EquipmentForm(FlaskForm):
     )
     condition = SelectField("État", choices=CONDITION_CHOICES, validators=[InputRequired()])
     image = FileField(
-        "Photo", validators=[Optional(), FileAllowed(IMAGE_EXTENSIONS, "Image jpg/png/webp uniquement.")]
+        "Photo", validators=[Optional(), FileAllowed(IMAGE_EXTENSIONS, "Image jpg/jpeg/jfif/png/webp uniquement.")]
     )
     notes = TextAreaField("Notes", validators=[Optional()])
     is_active = BooleanField("Actif", default=True)
