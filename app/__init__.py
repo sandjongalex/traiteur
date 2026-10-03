@@ -33,11 +33,12 @@ def create_app(config_name: str | None = None) -> Flask:
     csrf.init_app(app)
 
     from . import models  # noqa: F401
-    from .routes.admin import catalog_admin_bp
+    from .routes.admin import catalog_admin_bp, quote_request_admin_bp
     from .routes.public import public_bp
 
     app.register_blueprint(public_bp)
     app.register_blueprint(catalog_admin_bp)
+    app.register_blueprint(quote_request_admin_bp)
 
     _register_cli(app)
     _register_template_context(app)
