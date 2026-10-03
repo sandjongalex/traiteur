@@ -9,6 +9,9 @@
   {% elif quote_request.has_on_request_items %}<p>Le montant sera confirmé après étude de votre demande.</p>
   {% else %}<p>L’estimation indicative enregistrée est de <strong>{{ quote_request.estimated_total|money }}</strong>.</p>{% endif %}
   <p class="privacy-note">Cette page n’affiche volontairement aucune coordonnée personnelle.</p>
-  <a class="btn btn-primary" href="{{ url_for('public.index') }}">Retour à l’accueil</a>
+  <div class="hero-actions" style="justify-content:center">
+    <a class="btn btn-primary" href="{{ url_for('public.index') }}">Retour à l’accueil</a>
+    {% if site.whatsapp_url %}<a class="btn btn-outline" href="{{ site.whatsapp_url }}" rel="noopener">Continuer sur WhatsApp</a>{% endif %}
+  </div>
 </div></section>
 {% endblock %}
