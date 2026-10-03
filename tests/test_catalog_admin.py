@@ -104,3 +104,23 @@ def test_catalog_upload_rejects_forbidden_extension(app, tmp_path):
         raised = True
 
     assert raised is True
+
+
+def test_catalog_upload_rejects_mime_mismatch(app, tmp_path):
+    app.config["UPLOAD_FOLDER"] = str(tmp_path)
+
+    from werkzeug.datastructures import FileStorage
+
+    storage = FileStorage(
+        stream=BytesIO(b"not-really-a-jpeg"),
+        filename="photo.jpg",
+        content_type="application/octet-stream",
+    )
+
+    try:
+        save_catalog_image(storage)
+        raised = False
+    except ValueError:
+        raised = True
+
+    assert raised is True
