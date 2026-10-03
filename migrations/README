@@ -1,0 +1,10 @@
+Single-database migration configuration for WATO EVENTS.
+
+This directory is managed by Flask-Migrate/Alembic.
+
+Typical workflow:
+
+    flask db migrate -m "describe schema change"
+    flask db upgrade
+
+Do not use db.create_all() as the production schema migration strategy.
