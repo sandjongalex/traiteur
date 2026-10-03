@@ -4,26 +4,16 @@
 
 > « Vos moments, notre savoir-faire. »
 
-WATO EVENTS est une plateforme web **mobile first** destinée à réunir progressivement le site public, l'acquisition commerciale et la gestion opérationnelle de l'activité.
+WATO EVENTS est une plateforme web **mobile first** réunissant progressivement site public, acquisition commerciale et gestion opérationnelle.
 
 ## État du projet
 
-Le dépôt est actuellement au stade **PROMPT 1 — Fondations Flask + MySQL**.
+- PROMPT 0 — Cadrage : **terminé**
+- PROMPT 0.5 — Architecture globale : **terminé**
+- PROMPT 1 — Fondations Flask + MySQL : **terminé**
+- Prochaine étape : **PROMPT 2 — Identité visuelle + site public**
 
-Le socle technique est installé :
-
-- application factory Flask `create_app()` ;
-- configuration développement / test / production ;
-- SQLAlchemy ;
-- Flask-Migrate / Alembic ;
-- MySQL via PyMySQL ;
-- protection CSRF ;
-- Blueprint public minimal ;
-- route `/health` ;
-- commande `flask db-check` ;
-- tests pytest.
-
-Les modules métier (CRM, devis, événements, paiements, stocks, matériel, personnel, etc.) ne sont pas encore implémentés.
+Aucun module métier complet (devis, CRM, événements, paiements, stocks, matériel, personnel) n'est encore implémenté.
 
 ## Stack
 
@@ -34,7 +24,19 @@ Les modules métier (CRM, devis, événements, paiements, stocks, matériel, per
 - Jinja2
 - HTML5 / CSS / JavaScript
 - Bootstrap 5
-- Déploiement cible : PythonAnywhere
+- PythonAnywhere
+
+## Fondations existantes
+
+- application factory `create_app()` ;
+- configuration développement/test/production ;
+- SQLAlchemy et migrations ;
+- PyMySQL ;
+- CSRF ;
+- Blueprint public minimal ;
+- `/health` ;
+- commande `flask db-check` ;
+- tests pytest de base.
 
 ## Installation locale
 
@@ -43,19 +45,19 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
-Activation sous Linux/macOS :
+Activation Linux/macOS :
 
 ```bash
 source .venv/bin/activate
 ```
 
-Activation sous Windows :
+Activation Windows :
 
 ```powershell
 .venv\Scripts\activate
 ```
 
-Copier ensuite `.env.example` vers `.env`, puis lancer :
+Copier `.env.example` vers `.env`, puis :
 
 ```bash
 flask --app run.py run
@@ -67,25 +69,29 @@ flask --app run.py run
 pytest
 ```
 
-## Vérification MySQL
-
-Avec un `DATABASE_URL` valide :
-
-```bash
-flask --app run.py db-check
-```
-
 ## Documentation
 
 - [Vision](docs/VISION.md)
-- [Architecture](docs/ARCHITECTURE.md)
+- [Architecture globale](docs/ARCHITECTURE.md)
+- [ERD](docs/ERD.md)
+- [Flux métier](docs/BUSINESS_FLOWS.md)
+- [Conception DB](docs/DATABASE_DESIGN.md)
+- [RBAC](docs/RBAC.md)
+- [Sécurité](docs/SECURITY.md)
+- [Stratégie de tests](docs/TEST_STRATEGY.md)
+- [PythonAnywhere](docs/PYTHONANYWHERE.md)
 - [Fonctionnalités](docs/FONCTIONNALITES.md)
-- [Roadmap](docs/ROADMAP.md)
 - [Conventions](docs/CONVENTIONS.md)
-- [Fondations Flask + MySQL](docs/FOUNDATIONS.md)
+- [Fondations](docs/FOUNDATIONS.md)
+- [Roadmap](docs/ROADMAP.md)
+- [ADR](docs/adr/)
+
+## Architecture
+
+Le MVP suit un **monolithe Flask modulaire**. La structure métier cible est documentée mais sera créée progressivement, domaine par domaine.
 
 ## Prochaine étape
 
 **PROMPT 2 — IDENTITÉ VISUELLE + SITE PUBLIC**
 
-Cette étape ne doit pas être démarrée automatiquement.
+Ne pas démarrer les modules métier des prompts suivants par anticipation.
