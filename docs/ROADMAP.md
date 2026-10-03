@@ -29,8 +29,18 @@ QuoteRequest/QuoteRequestItem, références DEM, configurateur mobile-first, Pri
 
 User/Role/Permission, Flask-Login, RBAC serveur, back-office commun, gestion utilisateurs/rôles, audit, seed idempotent et suppression de l’ancien bypass par clé.
 
-## PROMPT 6 — CRM prospects / clients
+## PROMPT 5.5 — SQLite + PythonAnywhere gratuit
+État : **TERMINÉ côté code/documentation**.
+
+Portabilité DATABASE_URL, fallback SQLite, PRAGMA FK/WAL/timeout, tests SQLite et guide PythonAnywhere.
+
+## Validation opérationnelle PythonAnywhere
 État : **PROCHAINE ÉTAPE**.
+
+Test fonctionnel complet de WATO EVENTS sur PythonAnywhere avec SQLite.
+
+## PROMPT 6 — CRM prospects / clients
+État : **EN ATTENTE APRÈS VALIDATION PYTHONANYWHERE**.
 
 Prospect, Customer, conversion et historique commercial.
 
@@ -64,4 +74,4 @@ Durcissement transversal.
 ## PROMPT 16 — Déploiement PythonAnywhere
 Déploiement production, sauvegardes et procédure de mise à jour.
 
-**Prochaine étape : PROMPT 6 — CRM PROSPECTS + CLIENTS.**
+**Prochaine étape : TEST FONCTIONNEL COMPLET DE WATO EVENTS SUR PYTHONANYWHERE.**
