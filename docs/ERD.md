@@ -1,114 +1,67 @@
 # ERD — WATO EVENTS
 
-## Domaine réellement implémenté au PROMPT 3
+## Domaines réellement implémentés après PROMPT 4
 
 ```mermaid
 erDiagram
   CATEGORY ||--o{ DISH : classifies
-
   MENU ||--o{ MENU_ITEM : contains
   DISH ||--o{ MENU_ITEM : included
-
   PACK ||--o{ PACK_DISH : contains
   DISH ||--o{ PACK_DISH : included
-
   PACK ||--o{ PACK_MENU : contains
   MENU ||--o{ PACK_MENU : included
-
   PACK ||--o{ PACK_SERVICE : contains
   SERVICE ||--o{ PACK_SERVICE : included
 
-  CATEGORY {
+  QUOTE_REQUEST_SEQUENCE {
     int id PK
-    string name
-    string slug UK
-    string category_type
-    int display_order
-    bool is_active
+    int year UK
+    int last_value
   }
 
-  SERVICE {
+  QUOTE_REQUEST ||--o{ QUOTE_REQUEST_ITEM : contains
+
+  QUOTE_REQUEST {
     int id PK
-    string name
-    string slug UK
-    decimal base_price
-    string pricing_unit
-    bool is_featured
-    bool is_active
-    bool is_public
-    int display_order
+    string reference UK
+    string public_token UK
+    string submission_token UK
+    string status
+    string source
+    string customer_name
+    string phone
+    string whatsapp
+    string email
+    string event_type
+    date event_date
+    time event_time
+    string location
+    int guest_count
+    decimal budget_min
+    decimal budget_max
+    decimal estimated_total
+    bool has_on_request_items
+    string currency
   }
 
-  DISH {
+  QUOTE_REQUEST_ITEM {
     int id PK
-    int category_id FK
-    string name
-    string slug UK
-    decimal base_price
-    string pricing_unit
-    bool is_featured
-    bool is_active
-    bool is_public
-  }
-
-  MENU {
-    int id PK
-    string name
-    string slug UK
-    decimal price
-    string pricing_unit
-    int minimum_people
-    bool is_featured
-    bool is_active
-    bool is_public
-  }
-
-  MENU_ITEM {
-    int id PK
-    int menu_id FK
-    int dish_id FK
+    int quote_request_id FK
+    string item_type
+    int item_id
+    string label_snapshot
     decimal quantity
-    string section
-    int display_order
-    bool is_optional
-  }
-
-  PACK {
-    int id PK
-    string name
-    string slug UK
-    decimal price
-    string pricing_unit
-    int minimum_people
-    bool is_featured
-    bool is_active
-    bool is_public
-  }
-
-  PACK_DISH {
-    int pack_id FK
-    int dish_id FK
-    decimal quantity
-    int display_order
-  }
-
-  PACK_MENU {
-    int pack_id FK
-    int menu_id FK
-    decimal quantity
-    int display_order
-  }
-
-  PACK_SERVICE {
-    int pack_id FK
-    int service_id FK
-    decimal quantity
-    int display_order
+    decimal unit_price_snapshot
+    string pricing_unit_snapshot
+    decimal estimated_subtotal
   }
 ```
 
-## Domaines futurs
+## Référence catalogue dans QuoteRequestItem
 
-Les entités QuoteRequest, Quote, Order, Event, Payment, Invoice, Inventory, Equipment, Employee et autres restent conceptuelles et ne sont pas encore présentes dans la base.
+`item_type + item_id` identifie l'élément catalogue sélectionné, sans FK polymorphique. Les snapshots conservent le libellé, le prix et l'unité utilisés au moment de la demande.
 
-Le futur `QuoteItem` pourra référencer une entité catalogue puis capturer un snapshot commercial sans dépendre du prix courant.
+## Non implémenté
+
+`Quote`, `QuoteItem`, `Prospect`, `Customer`, `Order`, `Event`, `Payment` et les domaines opérationnels restent futurs.
