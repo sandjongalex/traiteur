@@ -125,7 +125,6 @@
   .admin-shell{display:block}
   .admin-sidebar{position:fixed;inset:0 auto 0 0;z-index:60;width:min(300px,86vw);height:100vh;transform:translateX(-102%);transition:transform var(--transition-base);box-shadow:var(--shadow-lg)}
   .admin-body.admin-nav-open .admin-sidebar{transform:translateX(0)}
-  .admin-body.admin-nav-open::after{content:"";position:fixed;inset:0;z-index:55;background:rgba(8,24,20,.42)}
   .admin-menu-toggle{display:grid;place-items:center}
   .admin-topbar{padding:.7rem 1rem}
   .admin-topbar-user-copy{display:none}
