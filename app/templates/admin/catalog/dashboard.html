@@ -1,15 +1,61 @@
 {% extends "admin/catalog_base.html" %}
 {% block admin_content %}
-<section class="admin-page-heading">
-  <div><p class="eyebrow">Catalogue</p><h1>Gérer l’offre WATO EVENTS</h1><p>Administrez les éléments publiables utilisés par le site public et les futurs devis.</p></div>
+<section class="admin-page-heading admin-page-heading-row">
+  <div>
+    <p class="eyebrow">Catalogue</p>
+    <h1>Gérer l’offre WATO EVENTS</h1>
+    <p>Administrez les éléments publiables utilisés par le site public et les futurs devis.</p>
+  </div>
+  {% if current_user.has_permission('catalog.edit') %}
+    <a class="btn btn-primary" href="{{ url_for('catalog_admin.service_create') }}">+ Nouveau service</a>
+  {% endif %}
 </section>
-<div class="admin-kpi-grid">
-  <a href="{{ url_for('catalog_admin.service_list') }}"><span>Services</span><strong>{{ counts.services }}</strong></a>
-  <a href="{{ url_for('catalog_admin.dish_list') }}"><span>Plats</span><strong>{{ counts.dishes }}</strong></a>
-  <a href="{{ url_for('catalog_admin.menu_list') }}"><span>Menus</span><strong>{{ counts.menus }}</strong></a>
-  <a href="{{ url_for('catalog_admin.pack_list') }}"><span>Packs</span><strong>{{ counts.packs }}</strong></a>
-  <a href="{{ url_for('catalog_admin.category_list') }}"><span>Catégories</span><strong>{{ counts.categories }}</strong></a>
+
+<div class="admin-kpi-grid admin-catalog-grid">
+  <a class="admin-action-card" href="{{ url_for('catalog_admin.service_list') }}">
+    <span>Services</span>
+    <strong>{{ counts.services }}</strong>
+    <small>Gérer les prestations →</small>
+  </a>
+
+  <a class="admin-action-card" href="{{ url_for('catalog_admin.dish_list') }}">
+    <span>Plats</span>
+    <strong>{{ counts.dishes }}</strong>
+    <small>Gérer les plats →</small>
+  </a>
+
+  <a class="admin-action-card" href="{{ url_for('catalog_admin.menu_list') }}">
+    <span>Menus</span>
+    <strong>{{ counts.menus }}</strong>
+    <small>Gérer les menus →</small>
+  </a>
+
+  <a class="admin-action-card" href="{{ url_for('catalog_admin.pack_list') }}">
+    <span>Packs</span>
+    <strong>{{ counts.packs }}</strong>
+    <small>Gérer les packs →</small>
+  </a>
+
+  <a class="admin-action-card" href="{{ url_for('catalog_admin.category_list') }}">
+    <span>Catégories</span>
+    <strong>{{ counts.categories }}</strong>
+    <small>Gérer les catégories →</small>
+  </a>
 </div>
+
+{% if current_user.has_permission('catalog.edit') %}
+<section class="admin-quick-actions">
+  <h2>Ajout rapide</h2>
+  <div class="admin-quick-actions-grid">
+    <a class="btn btn-secondary" href="{{ url_for('catalog_admin.service_create') }}">+ Ajouter un service</a>
+    <a class="btn btn-secondary" href="{{ url_for('catalog_admin.dish_create') }}">+ Ajouter un plat</a>
+    <a class="btn btn-secondary" href="{{ url_for('catalog_admin.menu_create') }}">+ Créer un menu</a>
+    <a class="btn btn-secondary" href="{{ url_for('catalog_admin.pack_create') }}">+ Créer un pack</a>
+    <a class="btn btn-secondary" href="{{ url_for('catalog_admin.category_create') }}">+ Ajouter une catégorie</a>
+  </div>
+</section>
+{% endif %}
+
 <div class="admin-note">
   <strong>Publication contrôlée</strong>
   <p>Un élément peut être actif sans être public. Utilisez les statuts pour préparer une offre avant sa mise en ligne.</p>
