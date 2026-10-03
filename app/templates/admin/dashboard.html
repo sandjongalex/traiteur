@@ -8,7 +8,7 @@
 
 <div class="admin-kpi-grid admin-dashboard-grid">
   {% if current_user.has_permission('quote_request.view') %}
-    <a class="admin-action-card" href="{{ url_for('quote_request_admin.list_requests') }}">
+    <a class="admin-action-card" href="{{ url_for('quote_request_admin.request_list') }}">
       <span>Nouvelles demandes</span>
       <strong>{{ counts.new_requests }}</strong>
       <small>Voir les demandes →</small>
