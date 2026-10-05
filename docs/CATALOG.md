@@ -1,8 +1,8 @@
-# Catalogue métier — WATO EVENTS
+# Catalogue métier — DNP DECO
 
 ## 1. Périmètre implémenté
 
-Le PROMPT 3 introduit le premier domaine métier persistant de WATO EVENTS.
+Le PROMPT 3 introduit le premier domaine métier persistant de DNP DECO.
 
 Entités réellement implémentées :
 

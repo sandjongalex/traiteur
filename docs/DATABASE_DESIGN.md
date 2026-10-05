@@ -1,4 +1,4 @@
-# Conception de base de données — WATO EVENTS
+# Conception de base de données — DNP DECO
 
 ## Principes
 

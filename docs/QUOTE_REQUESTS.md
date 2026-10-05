@@ -1,4 +1,4 @@
-# Demandes de devis — WATO EVENTS
+# Demandes de devis — DNP DECO
 
 ## Concepts
 

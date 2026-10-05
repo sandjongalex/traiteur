@@ -1,20 +1,20 @@
-# WATO EVENTS
+# DNP DECO
 
-Plateforme Flask/SQLAlchemy mobile-first pour WATO EVENTS — Traiteur & Événementiel à Yaoundé.
+Plateforme Flask/SQLAlchemy mobile-first pour DNP DECO — Traiteur & Événementiel à Yaoundé.
 
 ## État
 PROMPT 0 à 5 : **terminés**.  
 PROMPT 5.5 — SQLite + environnement PythonAnywhere gratuit : **terminé côté code/documentation**.  
 PROMPT 5.6 — Refonte UI/UX premium + design system : **implémenté côté code/documentation**.
 
-Prochaine étape : **VALIDATION VISUELLE ET FONCTIONNELLE DE WATO EVENTS**.
+Prochaine étape : **VALIDATION VISUELLE ET FONCTIONNELLE DE DNP DECO**.
 
 ## Base de données
 
 Le code métier reste indépendant du moteur :
 
 ```text
-WATO EVENTS
+DNP DECO
    ↓
 SQLAlchemy
    ├─ SQLite — environnement actuel / PythonAnywhere gratuit

@@ -1,4 +1,4 @@
-# Authentification — WATO EVENTS
+# Authentification — DNP DECO
 
 ## Connexion
 `/admin/login` avec email + mot de passe. Message générique en cas d’échec. `next` est validé contre les redirections externes.

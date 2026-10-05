@@ -1,8 +1,8 @@
-# Design System — WATO EVENTS
+# Design System — DNP DECO
 
 ## Direction artistique
 
-WATO EVENTS adopte une identité premium, chaleureuse et contemporaine, avec une influence africaine subtile portée par les matières, les contrastes et la sobriété plutôt que par des motifs clichés.
+DNP DECO adopte une identité premium, chaleureuse et contemporaine, avec une influence africaine subtile portée par les matières, les contrastes et la sobriété plutôt que par des motifs clichés.
 
 ## Palette
 
@@ -29,7 +29,7 @@ Aucune police distante n'est indispensable au fonctionnement.
 
 ## Logo
 
-Le site utilise actuellement un **wordmark temporaire** WATO EVENTS accompagné du monogramme WE. Il ne constitue pas le logo définitif.
+Le site utilise actuellement un **wordmark temporaire** DNP DECO accompagné du monogramme WE. Il ne constitue pas le logo définitif.
 
 Le futur logo pourra remplacer le composant de marque par un fichier local `logo.svg` ou `logo.png`.
 
@@ -60,7 +60,7 @@ Cibles prioritaires : 360, 375, 390, 412 px, puis tablette et desktop.
 
 Les SVG présents dans `app/static/images/` sont des **visuels temporaires locaux**.
 
-Ils doivent être remplacés progressivement par les vraies photos WATO EVENTS en conservant :
+Ils doivent être remplacés progressivement par les vraies photos DNP DECO en conservant :
 
 - ratios ;
 - `object-fit: cover` ;

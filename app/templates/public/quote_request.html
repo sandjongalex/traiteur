@@ -3,7 +3,7 @@
 {% block content %}
 <section class="page-hero quote-page">
   <div class="container narrow">
-    <p class="eyebrow">Configurateur WATO EVENTS</p>
+    <p class="eyebrow">Configurateur DNP DECO</p>
     <h1>Configurez votre événement, étape par étape.</h1>
     <p>Obtenez une estimation indicative à partir des éléments actuellement publiés. Cette estimation n’est pas un devis contractuel ; le montant définitif sera confirmé après étude de votre demande.</p>
   </div>
@@ -28,11 +28,11 @@
       {% for title, items, type_name, field_name in [("Services", services, "SERVICE", "service_ids"),("Menus", menus, "MENU", "menu_ids"),("Packs", packs, "PACK", "pack_ids")] %}
       {% if items %}<div class="choice-section"><h2>{{ title }}</h2><div class="choice-grid">{% for item in items %}{% set price = item.base_price if type_name == "SERVICE" else item.price %}<article class="choice-card"><img class="choice-card-image" loading="lazy" src="{{ url_for('static', filename=item.image_path or 'images/catalog-placeholder.svg') }}" alt="" width="560" height="320"><label>
         <input type="checkbox" name="{{ field_name }}" value="{{ item.id }}" data-catalog-choice data-type="{{ type_name }}" data-label="{{ item.name }}" data-pricing="{{ item.pricing_unit }}" data-price="{{ price if price is not none else '' }}" data-minimum="{{ item.minimum_people if type_name != 'SERVICE' and item.minimum_people else '' }}" {% if item.id in preselected[field_name.replace('_ids','s')] %}checked{% endif %}>
-        <span class="choice-check" aria-hidden="true">✓</span><strong>{{ item.name }}</strong><small>{{ item.short_description or "Offre WATO EVENTS" }}{% if type_name != "SERVICE" and item.minimum_people %} · minimum {{ item.minimum_people }} pers.{% endif %}</small><b>{{ price|money(item.pricing_unit) }}</b>
+        <span class="choice-check" aria-hidden="true">✓</span><strong>{{ item.name }}</strong><small>{{ item.short_description or "Offre DNP DECO" }}{% if type_name != "SERVICE" and item.minimum_people %} · minimum {{ item.minimum_people }} pers.{% endif %}</small><b>{{ price|money(item.pricing_unit) }}</b>
       </label>{% if item.pricing_unit in ['PER_UNIT','PER_HOUR'] %}<label class="quantity-field">Quantité / heures<input type="number" name="quantity_{{ type_name.lower() }}_{{ item.id }}" value="1" min="1" max="10000" inputmode="decimal"></label>{% endif %}</article>{% endfor %}</div></div>{% endif %}
       {% endfor %}
       {% if not services and not menus and not packs %}<div class="catalog-empty-public"><p>Le catalogue public est encore vide. Vous pouvez tout de même envoyer votre besoin sans sélectionner d’offre précise.</p></div>{% endif %}
-      <div class="estimate-box" aria-live="polite"><span>VOTRE ESTIMATION INDICATIVE</span><strong data-estimate-total>À calculer selon vos choix</strong><p data-estimate-note>Le montant définitif sera confirmé par WATO EVENTS après étude de votre demande.</p></div>
+      <div class="estimate-box" aria-live="polite"><span>VOTRE ESTIMATION INDICATIVE</span><strong data-estimate-total>À calculer selon vos choix</strong><p data-estimate-note>Le montant définitif sera confirmé par DNP DECO après étude de votre demande.</p></div>
       <div class="mobile-estimate-bar" aria-live="polite"><span data-mobile-estimate-total>Estimation à calculer</span><button class="btn btn-gold" type="button" data-next>Continuer</button></div>
       <div class="step-actions"><button class="btn btn-outline" type="button" data-prev>Retour</button><button class="btn btn-primary" type="button" data-next>Continuer</button></div>
     </fieldset>
@@ -43,7 +43,7 @@
     </fieldset>
     <fieldset class="config-step" data-step="4">
       <legend>Vérifiez avant d’envoyer</legend><div class="summary-card" data-summary>
-        <div><span>Événement</span><strong data-summary-event>—</strong></div><div><span>Date / lieu</span><strong data-summary-date>—</strong></div><div><span>Invités</span><strong data-summary-guests>—</strong></div><div class="summary-wide"><span>Sélections</span><div data-summary-items>—</div></div><div><span>Budget</span><strong data-summary-budget>—</strong></div><div><span>Contact</span><strong data-summary-contact>—</strong></div><div class="summary-wide summary-estimate"><span>ESTIMATION INDICATIVE</span><strong data-summary-estimate>—</strong><small>Cette estimation est fournie à titre indicatif. Le montant définitif sera confirmé par WATO EVENTS après étude de votre demande.</small></div>
+        <div><span>Événement</span><strong data-summary-event>—</strong></div><div><span>Date / lieu</span><strong data-summary-date>—</strong></div><div><span>Invités</span><strong data-summary-guests>—</strong></div><div class="summary-wide"><span>Sélections</span><div data-summary-items>—</div></div><div><span>Budget</span><strong data-summary-budget>—</strong></div><div><span>Contact</span><strong data-summary-contact>—</strong></div><div class="summary-wide summary-estimate"><span>ESTIMATION INDICATIVE</span><strong data-summary-estimate>—</strong><small>Cette estimation est fournie à titre indicatif. Le montant définitif sera confirmé par DNP DECO après étude de votre demande.</small></div>
       </div><div class="step-actions"><button class="btn btn-outline" type="button" data-prev>Modifier</button><button class="btn btn-gold" type="submit" data-submit>Envoyer ma demande</button></div>
     </fieldset>
   </form>

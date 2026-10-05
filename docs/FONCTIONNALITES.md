@@ -1,4 +1,4 @@
-# Fonctionnalités — WATO EVENTS
+# Fonctionnalités — DNP DECO
 
 Ce document décrit les modules fonctionnels prévus. Il s'agit d'un cadrage ; les modules ne sont pas implémentés au PROMPT 0.
 

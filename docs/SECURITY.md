@@ -1,4 +1,4 @@
-# Sécurité — WATO EVENTS
+# Sécurité — DNP DECO
 
 ## Authentification
 Flask-Login, email normalisé unique, mots de passe hashés Werkzeug, minimum 12 caractères. Les erreurs de login restent génériques.

@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 {% block content %}
-<section class="page-hero culinary-page"><div class="container narrow"><p class="eyebrow">Menu</p><h1>{{ menu.name }}</h1><p>{{ menu.short_description or "Une composition culinaire WATO EVENTS." }}</p></div></section>
+<section class="page-hero culinary-page"><div class="container narrow"><p class="eyebrow">Menu</p><h1>{{ menu.name }}</h1><p>{{ menu.short_description or "Une composition culinaire DNP DECO." }}</p></div></section>
 <section class="section"><div class="container catalog-detail-grid">
 <div class="catalog-detail-visual"><img src="{{ url_for('static', filename=menu.image_path or 'images/catalog-placeholder.svg') }}" alt="{{ menu.name }}" width="800" height="650"></div>
-<div class="catalog-detail-copy"><p class="eyebrow">Composition</p><h2>{{ menu.name }}</h2><p>{{ menu.description or menu.short_description or "Composition à préciser avec WATO EVENTS." }}</p>{% if menu.minimum_people %}<p class="catalog-meta">Minimum : {{ menu.minimum_people }} personnes</p>{% endif %}<p class="catalog-price catalog-price-large">{{ menu.price|money(menu.pricing_unit) }}</p>
+<div class="catalog-detail-copy"><p class="eyebrow">Composition</p><h2>{{ menu.name }}</h2><p>{{ menu.description or menu.short_description or "Composition à préciser avec DNP DECO." }}</p>{% if menu.minimum_people %}<p class="catalog-meta">Minimum : {{ menu.minimum_people }} personnes</p>{% endif %}<p class="catalog-price catalog-price-large">{{ menu.price|money(menu.pricing_unit) }}</p>
 {% if menu.items %}<div class="composition-list">{% for link in menu.items %}<div><span>{{ "%02d"|format(loop.index) }}</span><div><strong>{{ link.dish.name }}</strong>{% if link.section %}<small>{{ link.section }}</small>{% endif %}</div>{% if link.is_optional %}<em>Optionnel</em>{% endif %}</div>{% endfor %}</div>{% else %}<p class="catalog-meta">La composition détaillée de ce menu sera précisée prochainement.</p>{% endif %}
 <a class="btn btn-gold" href="{{ url_for('public.quote_request', menu=menu.slug) }}">Demander une proposition</a></div>
 </div></section>

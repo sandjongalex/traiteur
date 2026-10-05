@@ -1,1 +1,1 @@
-"""Shared utility helpers for WATO EVENTS."""
+"""Shared utility helpers for DNP DECO."""

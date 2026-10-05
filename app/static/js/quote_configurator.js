@@ -48,7 +48,7 @@
     if (mobileEstimate) mobileEstimate.textContent = root.querySelector("[data-estimate-total]").textContent;
     root.querySelector("[data-estimate-note]").textContent = r.partial
       ? "Certains éléments seront chiffrés après étude de votre demande."
-      : "Le montant définitif sera confirmé par WATO EVENTS après étude de votre demande.";
+      : "Le montant définitif sera confirmé par DNP DECO après étude de votre demande.";
   };
 
   const value = name => form.querySelector(`[name='${name}']`)?.value?.trim() || "";

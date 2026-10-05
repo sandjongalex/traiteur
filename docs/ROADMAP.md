@@ -1,4 +1,4 @@
-# Roadmap — WATO EVENTS
+# Roadmap — DNP DECO
 
 Le projet est développé par sprints successifs selon : **ANALYSER → IMPLÉMENTER → MIGRER → TESTER → CORRIGER → DOCUMENTER → RÉSUMER**.
 
@@ -42,7 +42,7 @@ Design tokens centralisés, site public premium, configurateur modernisé, login
 ## Validation visuelle et fonctionnelle
 État : **PROCHAINE ÉTAPE**.
 
-Validation visuelle et fonctionnelle de WATO EVENTS sur PythonAnywhere.
+Validation visuelle et fonctionnelle de DNP DECO sur PythonAnywhere.
 
 ## PROMPT 6 — CRM prospects / clients
 État : **EN ATTENTE APRÈS VALIDATION PYTHONANYWHERE**.
@@ -79,4 +79,4 @@ Durcissement transversal.
 ## PROMPT 16 — Déploiement PythonAnywhere
 Déploiement production, sauvegardes et procédure de mise à jour.
 
-**Prochaine étape : VALIDATION VISUELLE ET FONCTIONNELLE DE WATO EVENTS.**
+**Prochaine étape : VALIDATION VISUELLE ET FONCTIONNELLE DE DNP DECO.**

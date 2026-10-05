@@ -1,4 +1,4 @@
-# RBAC — WATO EVENTS
+# RBAC — DNP DECO
 
 ## Source de vérité
 Le serveur applique les permissions sous forme `resource.action`. Le masquage d’un bouton ne remplace jamais le contrôle serveur.

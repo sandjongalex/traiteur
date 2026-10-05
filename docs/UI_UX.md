@@ -1,7 +1,7 @@
-# UI / UX — WATO EVENTS
+# UI / UX — DNP DECO
 
 ## Direction
-WATO EVENTS utilise une direction premium, chaleureuse et professionnelle adaptée à un service de traiteur et d’événementiel à Yaoundé. Le public privilégie l’émotion, la gastronomie et la conversion ; le back-office privilégie la clarté, la vitesse et la lisibilité.
+DNP DECO utilise une direction premium, chaleureuse et professionnelle adaptée à un service de traiteur et d’événementiel à Yaoundé. Le public privilégie l’émotion, la gastronomie et la conversion ; le back-office privilégie la clarté, la vitesse et la lisibilité.
 
 ## Design tokens
 Les tokens centraux résident dans `app/static/css/app.css` :
@@ -57,7 +57,7 @@ Les statuts QuoteRequest utilisent cette sémantique visuelle sans modifier leur
 
 ## Site public
 Le hero met en avant :
-- WATO EVENTS ;
+- DNP DECO ;
 - traiteur & événementiel à Yaoundé ;
 - la signature « Vos moments, notre savoir-faire. » ;
 - un CTA principal vers le configurateur ;
@@ -85,7 +85,7 @@ Le back-office utilise :
 - tableaux transformés en cartes sur petits écrans ;
 - actions rapides et états vides.
 
-Le shell reste relié à l’identité WATO sans reproduire le site marketing.
+Le shell reste relié à l’identité DNP DECO sans reproduire le site marketing.
 
 ## Login
 Le login adopte un split-screen sur desktop et un formulaire simple sur mobile. Aucune information sensible n’est affichée.

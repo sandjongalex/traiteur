@@ -1,7 +1,7 @@
 # ADR-007 — Séparation Commande / Événement
 
 ## Contexte
-WATO EVENTS peut exécuter une simple livraison de repas ou une prestation complexe comme un mariage avec personnel et matériel.
+DNP DECO peut exécuter une simple livraison de repas ou une prestation complexe comme un mariage avec personnel et matériel.
 
 ## Décision
 `Order` et `Event` sont deux entités distinctes. Une commande peut exister sans événement ; un événement peut être rattaché à une commande.

@@ -116,7 +116,7 @@ def index():
         "public/home.html",
         **_page_context(
             "Traiteur & Événementiel à Yaoundé",
-            "WATO EVENTS accompagne vos réceptions à Yaoundé avec une approche culinaire et événementielle professionnelle.",
+            "DNP DECO accompagne vos réceptions à Yaoundé avec une approche culinaire et événementielle professionnelle.",
             homepage_services=homepage_services,
             featured_menus=featured_menus,
             featured_packs=featured_packs,
@@ -136,7 +136,7 @@ def about():
         "public/about.html",
         **_page_context(
             "À propos",
-            "Découvrez l’approche WATO EVENTS : une expérience traiteur et événementielle professionnelle à Yaoundé.",
+            "Découvrez l’approche DNP DECO : une expérience traiteur et événementielle professionnelle à Yaoundé.",
             why_us=WHY_US,
         ),
     )
@@ -149,7 +149,7 @@ def services():
         "public/services.html",
         **_page_context(
             "Nos services",
-            "Mariages, cérémonies, buffets, cocktails et événements d’entreprise : découvrez les prestations WATO EVENTS à Yaoundé.",
+            "Mariages, cérémonies, buffets, cocktails et événements d’entreprise : découvrez les prestations DNP DECO à Yaoundé.",
             services=items,
         ),
     )
@@ -171,7 +171,7 @@ def service_detail(slug):
         **_page_context(
             item.name,
             item.short_description
-            or f"Découvrez la prestation {item.name} proposée par WATO EVENTS à Yaoundé.",
+            or f"Découvrez la prestation {item.name} proposée par DNP DECO à Yaoundé.",
             service=item,
         ),
     )
@@ -185,7 +185,7 @@ def menus():
         "public/menus.html",
         **_page_context(
             "Menus & expérience culinaire",
-            "Explorez les menus et offres culinaires publiés par WATO EVENTS à Yaoundé.",
+            "Explorez les menus et offres culinaires publiés par DNP DECO à Yaoundé.",
             menus=items,
             packs=packs,
             culinary_categories=CULINARY_CATEGORIES,
@@ -210,7 +210,7 @@ def menu_detail(slug):
         "public/menu_detail.html",
         **_page_context(
             item.name,
-            item.short_description or f"Découvrez le menu {item.name} de WATO EVENTS.",
+            item.short_description or f"Découvrez le menu {item.name} de DNP DECO.",
             menu=item,
         ),
     )
@@ -223,7 +223,7 @@ def packs():
         "public/packs.html",
         **_page_context(
             "Packs événementiels",
-            "Découvrez les packs publiés par WATO EVENTS pour simplifier l’organisation de votre réception.",
+            "Découvrez les packs publiés par DNP DECO pour simplifier l’organisation de votre réception.",
             packs=items,
         ),
     )
@@ -250,7 +250,7 @@ def pack_detail(slug):
         "public/pack_detail.html",
         **_page_context(
             item.name,
-            item.short_description or f"Découvrez le pack {item.name} de WATO EVENTS.",
+            item.short_description or f"Découvrez le pack {item.name} de DNP DECO.",
             pack=item,
         ),
     )
@@ -262,7 +262,7 @@ def gallery():
         "public/gallery.html",
         **_page_context(
             "Nos réalisations",
-            "Aperçu visuel de l’univers WATO EVENTS et de nos formats de réception à Yaoundé.",
+            "Aperçu visuel de l’univers DNP DECO et de nos formats de réception à Yaoundé.",
             gallery_items=GALLERY_ITEMS,
         ),
     )
@@ -274,7 +274,7 @@ def contact():
         "public/contact.html",
         **_page_context(
             "Contact",
-            "Contactez WATO EVENTS à Yaoundé pour parler de votre réception ou de votre besoin traiteur.",
+            "Contactez DNP DECO à Yaoundé pour parler de votre réception ou de votre besoin traiteur.",
         ),
     )
 
@@ -336,7 +336,7 @@ def quote_request():
         "public/quote_request.html",
         **_page_context(
             "Configurer mon événement",
-            "Configurez votre événement et obtenez une estimation indicative avant d’envoyer votre demande à WATO EVENTS.",
+            "Configurez votre événement et obtenez une estimation indicative avant d’envoyer votre demande à DNP DECO.",
             form=form,
             services=catalog["services"],
             menus=catalog["menus"],
@@ -361,7 +361,7 @@ def quote_request_confirmation(reference, token):
         "public/quote_request_confirmation.html",
         **_page_context(
             "Demande enregistrée",
-            "Confirmation d’enregistrement de votre demande WATO EVENTS.",
+            "Confirmation d’enregistrement de votre demande DNP DECO.",
             quote_request=saved,
         ),
     )

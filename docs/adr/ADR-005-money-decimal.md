@@ -1,7 +1,7 @@
 # ADR-005 — Argent en Decimal / NUMERIC
 
 ## Contexte
-WATO EVENTS manipulera devis, acomptes, paiements, remises, taxes, coûts et marges.
+DNP DECO manipulera devis, acomptes, paiements, remises, taxes, coûts et marges.
 
 ## Décision
 Utiliser `Decimal` en Python et `NUMERIC/DECIMAL` en base. Interdire `float` pour l'argent.

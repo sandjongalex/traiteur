@@ -16,7 +16,7 @@ def test_public_pages_return_html(client, path):
     response = client.get(path)
     assert response.status_code == 200
     assert "text/html" in response.content_type
-    assert b"WATO EVENTS" in response.data
+    assert b"DNP DECO" in response.data
 
 
 def test_home_contains_primary_navigation_and_quote_cta(client):
@@ -53,5 +53,5 @@ def test_contact_does_not_fake_submission(client):
 def test_unknown_page_uses_branded_404(client):
     response = client.get("/cette-page-n-existe-pas")
     assert response.status_code == 404
-    assert b"WATO EVENTS" in response.data
+    assert b"DNP DECO" in response.data
     assert b"404" in response.data

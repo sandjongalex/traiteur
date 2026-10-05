@@ -6,6 +6,6 @@
 <ellipse cx="400" cy="365" rx="205" ry="82" fill="#faf5eb" opacity=".96"/><ellipse cx="400" cy="350" rx="160" ry="58" fill="#fff" opacity=".93"/>
 <circle cx="350" cy="334" r="34" fill="#c79a4a" opacity=".92"/><circle cx="425" cy="345" r="46" fill="#4c3b2d" opacity=".75"/><circle cx="475" cy="323" r="27" fill="#e7c887"/>
 <path d="M255 246 C320 175 480 175 545 246" fill="none" stroke="#faf5eb" stroke-width="13" stroke-linecap="round" opacity=".8"/>
-<text x="120" y="145" fill="#fff" font-family="Georgia,serif" font-size="36" font-weight="700">WATO EVENTS</text>
+<text x="120" y="145" fill="#fff" font-family="Georgia,serif" font-size="36" font-weight="700">DNP DECO</text>
 <text x="120" y="185" fill="#faf5eb" font-family="Arial,sans-serif" font-size="18" letter-spacing="3">CÉRÉMONIE</text>
 </svg>

@@ -1,8 +1,8 @@
-# Vision — WATO EVENTS
+# Vision — DNP DECO
 
 ## 1. Positionnement
 
-WATO EVENTS est une entreprise de **traiteur et d'événementiel professionnel à Yaoundé, Cameroun**.
+DNP DECO est une entreprise de **traiteur et d'événementiel professionnel à Yaoundé, Cameroun**.
 
 Signature de travail : **« Vos moments, notre savoir-faire. »**
 
@@ -75,7 +75,7 @@ Le back-office doit être :
 
 ## 6. Parcours commercial de référence
 
-VISITEUR → DÉCOUVERTE WATO EVENTS → SERVICES → MENUS / PACKS → CONFIGURATION DU BESOIN → ESTIMATION INDICATIVE → DEMANDE DE DEVIS → PROSPECT → DEVIS → VALIDATION → CLIENT → ÉVÉNEMENT → PAIEMENT → RÉALISATION → CLÔTURE
+VISITEUR → DÉCOUVERTE DNP DECO → SERVICES → MENUS / PACKS → CONFIGURATION DU BESOIN → ESTIMATION INDICATIVE → DEMANDE DE DEVIS → PROSPECT → DEVIS → VALIDATION → CLIENT → ÉVÉNEMENT → PAIEMENT → RÉALISATION → CLÔTURE
 
 Cette chaîne guide la conception fonctionnelle et les relations de données.
 
@@ -92,7 +92,7 @@ Cette chaîne guide la conception fonctionnelle et les relations de données.
 
 ## 8. Réussite du projet
 
-Le produit sera considéré réussi lorsqu'il permettra à WATO EVENTS de :
+Le produit sera considéré réussi lorsqu'il permettra à DNP DECO de :
 
 1. attirer et convertir des prospects ;
 2. centraliser l'information opérationnelle ;

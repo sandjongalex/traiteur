@@ -1,1 +1,1 @@
-"""HTTP route packages for WATO EVENTS."""
+"""HTTP route packages for DNP DECO."""

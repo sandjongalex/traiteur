@@ -1,7 +1,7 @@
 # ADR-002 — Portabilité base de données : SQLite aujourd'hui, MySQL demain
 
 ## Contexte
-L'environnement PythonAnywhere gratuit actuellement disponible ne fournit pas de base MySQL utilisable pour WATO EVENTS. Le MVP doit néanmoins être exécutable avec persistance relationnelle, contraintes et migrations.
+L'environnement PythonAnywhere gratuit actuellement disponible ne fournit pas de base MySQL utilisable pour DNP DECO. Le MVP doit néanmoins être exécutable avec persistance relationnelle, contraintes et migrations.
 
 ## Décision
 SQLAlchemy reste l'abstraction unique et Alembic/Flask-Migrate reste le mécanisme de schéma.

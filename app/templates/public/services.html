@@ -4,7 +4,7 @@
   <div class="container narrow">
     <p class="eyebrow">Nos services</p>
     <h1>Des prestations claires pour construire votre événement.</h1>
-    <p>Découvrez les services actuellement publiés par WATO EVENTS et configurez votre demande selon vos besoins.</p>
+    <p>Découvrez les services actuellement publiés par DNP DECO et configurez votre demande selon vos besoins.</p>
   </div>
 </section>
 <section class="section"><div class="container">
@@ -16,7 +16,7 @@
   <div class="service-card-content">
     <span class="card-number">{{ "%02d"|format(loop.index) }}</span>
     <h2>{{ service.name }}</h2>
-    <p>{{ service.short_description or service.description or "Prestation WATO EVENTS." }}</p>
+    <p>{{ service.short_description or service.description or "Prestation DNP DECO." }}</p>
     <p class="catalog-price">{{ service.base_price|money(service.pricing_unit) }}</p>
     <a href="{{ url_for('public.service_detail', slug=service.slug) }}">Découvrir le service →</a>
   </div>
@@ -27,7 +27,7 @@
 <div class="catalog-empty-public">
   <p class="eyebrow">Catalogue en préparation</p>
   <h2>Nos prestations seront publiées ici progressivement.</h2>
-  <p>WATO EVENTS prépare son catalogue détaillé. Vous pouvez déjà nous parler de votre événement.</p>
+  <p>DNP DECO prépare son catalogue détaillé. Vous pouvez déjà nous parler de votre événement.</p>
   <a class="btn btn-primary" href="{{ url_for('public.quote_request') }}">Configurer mon événement</a>
 </div>
 {% endif %}

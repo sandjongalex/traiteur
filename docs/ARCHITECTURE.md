@@ -1,8 +1,8 @@
-# Architecture globale — WATO EVENTS
+# Architecture globale — DNP DECO
 
 ## 1. Décision d'ensemble
 
-WATO EVENTS adopte un **monolithe Flask modulaire** : une seule application et une seule base MySQL pour le MVP, avec séparation stricte des domaines dans le code. Aucun microservice, Redis, Celery, Docker ou Kubernetes n'est requis pour fonctionner sur PythonAnywhere.
+DNP DECO adopte un **monolithe Flask modulaire** : une seule application et une seule base MySQL pour le MVP, avec séparation stricte des domaines dans le code. Aucun microservice, Redis, Celery, Docker ou Kubernetes n'est requis pour fonctionner sur PythonAnywhere.
 
 Le socle existant `create_app()`, `extensions.py`, Flask-SQLAlchemy, Flask-Migrate et CSRF est conservé.
 

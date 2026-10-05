@@ -1,4 +1,4 @@
-# Architecture de déploiement PythonAnywhere — WATO EVENTS
+# Architecture de déploiement PythonAnywhere — DNP DECO
 
 La cible actuelle sur offre gratuite utilise SQLite. MySQL reste une cible future lorsque l'environnement et la charge le justifient.
 

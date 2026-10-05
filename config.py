@@ -24,7 +24,7 @@ def _optional_env(name: str) -> str | None:
 
 
 class BaseConfig:
-    APP_NAME = "WATO EVENTS"
+    APP_NAME = "DNP DECO"
     APP_TIMEZONE = os.getenv("APP_TIMEZONE", "Africa/Douala")
     CURRENCY = os.getenv("WATO_CURRENCY", "XAF")
     SECRET_KEY = os.getenv("SECRET_KEY", "dev-only-change-me")
@@ -42,7 +42,7 @@ class BaseConfig:
     REMEMBER_COOKIE_HTTPONLY = True
     REMEMBER_COOKIE_SAMESITE = "Lax"
 
-    WATO_COMPANY_NAME = os.getenv("WATO_COMPANY_NAME", "WATO EVENTS")
+    WATO_COMPANY_NAME = os.getenv("WATO_COMPANY_NAME", "DNP DECO")
     WATO_TAGLINE = os.getenv("WATO_TAGLINE", "Vos moments, notre savoir-faire.")
     WATO_CITY = os.getenv("WATO_CITY", "Yaoundé")
     WATO_COUNTRY = os.getenv("WATO_COUNTRY", "Cameroun")

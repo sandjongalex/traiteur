@@ -6,7 +6,7 @@ from app import create_app
 def test_create_app_uses_testing_config():
     app = create_app("testing")
     assert app.testing is True
-    assert app.config["APP_NAME"] == "WATO EVENTS"
+    assert app.config["APP_NAME"] == "DNP DECO"
     assert app.config["CURRENCY"] == "XAF"
 
 
@@ -20,7 +20,7 @@ def test_health_endpoint(client):
     assert response.status_code == 200
     assert response.get_json() == {
         "status": "ok",
-        "application": "WATO EVENTS",
+        "application": "DNP DECO",
     }
 
 
@@ -28,5 +28,5 @@ def test_root_renders_public_site(client):
     response = client.get("/")
     assert response.status_code == 200
     assert "text/html" in response.content_type
-    assert b"WATO EVENTS" in response.data
+    assert b"DNP DECO" in response.data
     assert b"Demander un devis" in response.data

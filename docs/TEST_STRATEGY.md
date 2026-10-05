@@ -1,4 +1,4 @@
-# Stratégie de tests — WATO EVENTS
+# Stratégie de tests — DNP DECO
 
 ## Niveaux
 

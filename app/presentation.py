@@ -64,7 +64,7 @@ PROCESS_STEPS = [
     ("01", "Parlez-nous de votre événement", "Partagez le type de réception, la date, le lieu et le nombre de personnes."),
     ("02", "Nous préparons votre proposition", "Nous analysons votre besoin avant de formuler une offre adaptée."),
     ("03", "Vous validez votre prestation", "Le devis final est confirmé avec vous avant toute exécution."),
-    ("04", "Wato Events prépare votre événement", "Cuisine, service et organisation sont coordonnés selon la prestation retenue."),
+    ("04", "DNP DECO prépare votre événement", "Cuisine, service et organisation sont coordonnés selon la prestation retenue."),
     ("05", "Profitez de votre réception", "Notre objectif : vous permettre de vivre le moment avec plus de sérénité."),
 ]
 

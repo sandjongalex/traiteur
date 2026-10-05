@@ -1,4 +1,4 @@
-# Conventions de développement — WATO EVENTS
+# Conventions de développement — DNP DECO
 
 ## 1. Travail incrémental
 
@@ -75,7 +75,7 @@ Exemples d'informations configurables :
 - environnement Flask ;
 - secret de session ;
 - URL MySQL ;
-- nom WATO EVENTS ;
+- nom DNP DECO ;
 - téléphone ;
 - WhatsApp ;
 - email ;

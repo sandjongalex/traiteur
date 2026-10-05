@@ -1,7 +1,7 @@
 # ADR-001 — Monolithe Flask modulaire
 
 ## Contexte
-WATO EVENTS doit couvrir site public, commerce, opérations et finance tout en restant simple à déployer sur PythonAnywhere.
+DNP DECO doit couvrir site public, commerce, opérations et finance tout en restant simple à déployer sur PythonAnywhere.
 
 ## Décision
 Utiliser un monolithe Flask modulaire dans une application unique et une base MySQL unique pour le MVP.

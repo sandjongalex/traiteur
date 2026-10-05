@@ -1,4 +1,4 @@
-# ERD — WATO EVENTS
+# ERD — DNP DECO
 
 ## Domaines réellement implémentés après PROMPT 4
 

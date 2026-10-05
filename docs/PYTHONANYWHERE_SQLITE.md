@@ -1,4 +1,4 @@
-# PythonAnywhere gratuit + SQLite — WATO EVENTS
+# PythonAnywhere gratuit + SQLite — DNP DECO
 
 ## 1. Objectif
 

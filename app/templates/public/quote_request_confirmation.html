@@ -3,7 +3,7 @@
 <section class="section confirmation-section"><div class="container narrow confirmation-card">
   <span class="confirmation-icon" aria-hidden="true">✓</span><p class="eyebrow">Demande enregistrée</p>
   <h1>Merci. Votre demande a bien été enregistrée.</h1>
-  <p>WATO EVENTS étudiera votre besoin avant d’établir une proposition définitive. Cette demande n’est pas encore un devis commercial.</p>
+  <p>DNP DECO étudiera votre besoin avant d’établir une proposition définitive. Cette demande n’est pas encore un devis commercial.</p>
   <div class="confirmation-reference"><span>Votre référence</span><strong>{{ quote_request.reference }}</strong></div>
   {% if quote_request.has_on_request_items and quote_request.estimated_total > 0 %}<p>Certains éléments nécessitent une étude complémentaire. L’estimation connue enregistrée est à partir de <strong>{{ quote_request.estimated_total|money }}</strong>.</p>
   {% elif quote_request.has_on_request_items %}<p>Le montant sera confirmé après étude de votre demande.</p>
