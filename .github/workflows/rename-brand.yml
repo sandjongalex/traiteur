@@ -25,13 +25,17 @@ jobs:
               '.py', '.html', '.md', '.txt', '.css', '.js', '.svg', '.yml', '.yaml',
               '.toml', '.ini', '.cfg', '.example'
           }
-          skip_parts = {'.git', '.venv', 'venv', '__pycache__'}
+          skip_parts = {'.git', '.github', '.venv', 'venv', '__pycache__'}
           replacements = [
               ('WATO EVENTS', 'DNP DECO'),
               ('Wato Events', 'DNP DECO'),
               ('WATO Events', 'DNP DECO'),
               ('<strong>WATO</strong><small>EVENTS</small>', '<strong>DNP</strong><small>DECO</small>'),
+              ('<strong>WATO</strong><small>ADMIN</small>', '<strong>DNP</strong><small>DECO</small>'),
               ('<span class="brand-mark" aria-hidden="true">WE</span>', '<span class="brand-mark" aria-hidden="true">DD</span>'),
+              ('>WATO</text>', '>DNP</text>'),
+              ('>EVENTS</text>', '>DECO</text>'),
+              ('identité WATO', 'identité DNP DECO'),
           ]
 
           changed = []
@@ -71,7 +75,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A
+          git add -A ':!.github/workflows/rename-brand.yml'
           if git diff --cached --quiet; then
             echo "No changes"
           else
